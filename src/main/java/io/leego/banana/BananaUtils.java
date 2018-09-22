@@ -1,4 +1,4 @@
-package com.leego.standard.banana;
+package io.leego.banana;
 
 import java.io.*;
 import java.util.*;
@@ -10,13 +10,10 @@ import java.util.*;
  * @version 1.0.0
  */
 public final class BananaUtils {
-    private BananaUtils() {
-    }
-
-    static final int FULL_WIDTH = 0;
-    static final int FITTING = 1;
-    static final int SMUSHING = 2;
-    static final int CONTROLLED_SMUSHING = 3;
+    private static final int FULL_WIDTH = FittingStyleEnum.FULL_WIDTH.getValue();
+    private static final int FITTING = FittingStyleEnum.FITTING.getValue();
+    private static final int SMUSHING = FittingStyleEnum.SMUSHING.getValue();
+    private static final int CONTROLLED_SMUSHING = FittingStyleEnum.CONTROLLED_SMUSHING.getValue();
     private static final String EMPTY = "";
     private static final String BLANK = " ";
     private static final String INVALID = "invalid";
@@ -36,12 +33,15 @@ public final class BananaUtils {
         flfMap = new HashMap<>();
     }
 
-    public static void setCacheable(boolean b) {
-        cacheable = b;
+    private BananaUtils() {
     }
 
     public static boolean isCacheable() {
         return cacheable;
+    }
+
+    public static void setCacheable(boolean b) {
+        cacheable = b;
     }
 
     public static List<String> fonts() {
@@ -403,20 +403,19 @@ public final class BananaUtils {
         FittingRuleEnum[] fittingRules = FittingRuleEnum.values();
         int val = newLayout != null ? newLayout : oldLayout;
 
-        int index = 0;
-
-        while (index < fittingRules.length) {
-            FittingRuleEnum fittingRule = fittingRules[index];
+        for (int i = 0; i < fittingRules.length; ++i) {
+            FittingRuleEnum fittingRule = fittingRules[i];
             int code = fittingRule.getCode();
             String name = fittingRule.getName();
             int value = fittingRule.getValue();
             if (val >= code) {
                 val = val - code;
-                rules.putIfAbsent(name, value);
+                if (!rules.containsKey(name)) {
+                    rules.put(name, value);
+                }
             } else if (!"vLayout".equals(name) && !"hLayout".equals(name)) {
                 rules.put(name, 0);
             }
-            index++;
         }
 
         if (!rules.containsKey("hLayout")) {
@@ -425,61 +424,61 @@ public final class BananaUtils {
             } else if (oldLayout == -1) {
                 rules.put("hLayout", FULL_WIDTH);
             } else {
-                if (Objects.equals(rules.get("hRule1"), 1)
-                        || Objects.equals(rules.get("hRule2"), 1)
-                        || Objects.equals(rules.get("hRule3"), 1)
-                        || Objects.equals(rules.get("hRule4"), 1)
-                        || Objects.equals(rules.get("hRule5"), 1)
-                        || Objects.equals(rules.get("hRule6"), 1)) {
+                if (equals(rules.get("hRule1"), 1)
+                        || equals(rules.get("hRule2"), 1)
+                        || equals(rules.get("hRule3"), 1)
+                        || equals(rules.get("hRule4"), 1)
+                        || equals(rules.get("hRule5"), 1)
+                        || equals(rules.get("hRule6"), 1)) {
                     rules.put("hLayout", CONTROLLED_SMUSHING);
                 } else {
                     rules.put("hLayout", SMUSHING);
                 }
             }
-        } else if (Objects.equals(rules.get("hLayout"), SMUSHING)) {
-            if (Objects.equals(rules.get("hRule1"), 1)
-                    || Objects.equals(rules.get("hRule2"), 1)
-                    || Objects.equals(rules.get("hRule3"), 1)
-                    || Objects.equals(rules.get("hRule4"), 1)
-                    || Objects.equals(rules.get("hRule5"), 1)
-                    || Objects.equals(rules.get("hRule6"), 1)) {
+        } else if (equals(rules.get("hLayout"), SMUSHING)) {
+            if (equals(rules.get("hRule1"), 1)
+                    || equals(rules.get("hRule2"), 1)
+                    || equals(rules.get("hRule3"), 1)
+                    || equals(rules.get("hRule4"), 1)
+                    || equals(rules.get("hRule5"), 1)
+                    || equals(rules.get("hRule6"), 1)) {
                 rules.put("hLayout", CONTROLLED_SMUSHING);
             }
         }
 
         if (!rules.containsKey("vLayout")) {
-            if (Objects.equals(rules.get("vRule1"), 1)
-                    || Objects.equals(rules.get("vRule2"), 1)
-                    || Objects.equals(rules.get("vRule3"), 1)
-                    || Objects.equals(rules.get("vRule4"), 1)
-                    || Objects.equals(rules.get("vRule5"), 1)) {
+            if (equals(rules.get("vRule1"), 1)
+                    || equals(rules.get("vRule2"), 1)
+                    || equals(rules.get("vRule3"), 1)
+                    || equals(rules.get("vRule4"), 1)
+                    || equals(rules.get("vRule5"), 1)) {
                 rules.put("vLayout", CONTROLLED_SMUSHING);
             } else {
                 rules.put("vLayout", FULL_WIDTH);
             }
-        } else if (Objects.equals(rules.get("vLayout"), SMUSHING)) {
-            if (Objects.equals(rules.get("vRule1"), 1)
-                    || Objects.equals(rules.get("vRule2"), 1)
-                    || Objects.equals(rules.get("vRule3"), 1)
-                    || Objects.equals(rules.get("vRule4"), 1)
-                    || Objects.equals(rules.get("vRule5"), 1)) {
+        } else if (equals(rules.get("vLayout"), SMUSHING)) {
+            if (equals(rules.get("vRule1"), 1)
+                    || equals(rules.get("vRule2"), 1)
+                    || equals(rules.get("vRule3"), 1)
+                    || equals(rules.get("vRule4"), 1)
+                    || equals(rules.get("vRule5"), 1)) {
                 rules.put("vLayout", CONTROLLED_SMUSHING);
             }
         }
         return FittingRule.build(
                 rules.get("hLayout"),
-                Objects.equals(rules.get("hRule1"), 1),
-                Objects.equals(rules.get("hRule2"), 1),
-                Objects.equals(rules.get("hRule3"), 1),
-                Objects.equals(rules.get("hRule4"), 1),
-                Objects.equals(rules.get("hRule5"), 1),
-                Objects.equals(rules.get("hRule6"), 1),
+                equals(rules.get("hRule1"), 1),
+                equals(rules.get("hRule2"), 1),
+                equals(rules.get("hRule3"), 1),
+                equals(rules.get("hRule4"), 1),
+                equals(rules.get("hRule5"), 1),
+                equals(rules.get("hRule6"), 1),
                 rules.get("vLayout"),
-                Objects.equals(rules.get("vRule1"), 1),
-                Objects.equals(rules.get("vRule2"), 1),
-                Objects.equals(rules.get("vRule3"), 1),
-                Objects.equals(rules.get("vRule4"), 1),
-                Objects.equals(rules.get("vRule5"), 1)
+                equals(rules.get("vRule1"), 1),
+                equals(rules.get("vRule2"), 1),
+                equals(rules.get("vRule3"), 1),
+                equals(rules.get("vRule4"), 1),
+                equals(rules.get("vRule5"), 1)
         );
     }
 
@@ -899,6 +898,10 @@ public final class BananaUtils {
 
     private static boolean isNotEmpty(String s) {
         return !isEmpty(s);
+    }
+
+    private static boolean equals(Object o1, Object o2) {
+        return Objects.equals(o1, o2);
     }
 
 }

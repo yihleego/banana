@@ -19,7 +19,6 @@ target/
 nbproject/private/
 build/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 
@@ -27,6 +26,3 @@ nbdist/
 logs
 *.log
 test
-
-### statuc ###
-node_modules

@@ -1,4 +1,4 @@
-package com.leego.standard.banana;
+package io.leego.banana;
 
 import java.util.List;
 import java.util.Map;

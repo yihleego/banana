@@ -7,11 +7,21 @@ A FIGlet Utils for Java.
 [FIGlet](https://en.wikipedia.org/wiki/FIGlet) is a computer program that generates text banners, in a variety of typefaces, composed of letters made up of conglomerations of smaller 
 ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)). The name derives from "Frank, Ian and Glenn's letters".
 
-Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHPand Python. FIGlet was featured as a Debian Package of the Day in 2007.
+Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
+
+## Maven dependency
+
+```xml
+<dependency>
+    <groupId>io.leego</groupId>
+    <artifactId>banana</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
 
 ## Usage
 
-#### An example 
+### An example 
 
 ```java
 BananaUtils.bananaify("Hello, Github!");
@@ -27,13 +37,13 @@ Output:
 ```
 
 
-#### Multiline
+### Multiline
 
 ```java
 String s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
         + "abcdefghijklmnopqrstuvwxyz\n"
         + "1234567890" + ". : , ; ' \" \\ ( ! ? ) + - * / =";
-System.out.println(BananaUtils.bananaify(s));
+BananaUtils.bananaify(s);
 ```
 Output: 
 ```
@@ -55,12 +65,12 @@ Output:
 ```
 
 
-#### More fonts
+### More fonts
 
 ```java
 List<String> fonts = BananaUtils.fonts();
 for (String font : fonts) {
-    System.out.println("[" + font + "]\n" + BananaUtils.bananaify("Hello, Github!", font) + "\n\n");
+    BananaUtils.bananaify("Hello, Github!", font);
 }
 ```
 Examples:
@@ -98,9 +108,11 @@ Examples:
  |  _  |  __/ | | (_) |  | |_| | | |_| | | | |_| | |_) |_|
  |_| |_|\___|_|_|\___( )  \____|_|\__|_| |_|\__,_|_.__/(_)
                      |/            
-
-more...
 ```
+
+## More
+
+Click [here](https://github.com/yihleego/banana/blob/master/MORE.md) to see more fonts.
 
 ## Contact
 > * Bugs: [Issues](https://github.com/yihleego/banana/issues)
