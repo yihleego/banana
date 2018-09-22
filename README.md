@@ -33,7 +33,7 @@ Output:
 String s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
         + "abcdefghijklmnopqrstuvwxyz\n"
         + "1234567890" + ". : , ; ' \" \\ ( ! ? ) + - * / =";
-System.out.println(BananaUtils.bananaify(s));
+BananaUtils.bananaify(s);
 ```
 Output: 
 ```
@@ -60,7 +60,7 @@ Output:
 ```java
 List<String> fonts = BananaUtils.fonts();
 for (String font : fonts) {
-    System.out.println("[" + font + "]\n" + BananaUtils.bananaify("Hello, Github!", font) + "\n\n");
+    BananaUtils.bananaify("Hello, Github!", font);
 }
 ```
 Examples:
