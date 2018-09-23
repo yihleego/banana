@@ -11,7 +11,7 @@ Being free software, FIGlet is commonly included as part of many Unix-like opera
 
 ## Usage
 
-#### An example 
+### An example 
 
 ```java
 BananaUtils.bananaify("Hello, Github!");
@@ -27,7 +27,7 @@ Output:
 ```
 
 
-#### Multiline
+### Multiline
 
 ```java
 String s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
@@ -55,7 +55,7 @@ Output:
 ```
 
 
-#### More fonts
+### More fonts
 
 ```java
 List<String> fonts = BananaUtils.fonts();
@@ -98,9 +98,11 @@ Examples:
  |  _  |  __/ | | (_) |  | |_| | | |_| | | | |_| | |_) |_|
  |_| |_|\___|_|_|\___( )  \____|_|\__|_| |_|\__,_|_.__/(_)
                      |/            
-
-more...
 ```
+
+## More
+
+Click [here](https://github.com/yihleego/banana/blob/master/MORE.md) to see more fonts.
 
 ## Contact
 > * Bugs: [Issues](https://github.com/yihleego/banana/issues)
