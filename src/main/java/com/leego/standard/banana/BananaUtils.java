@@ -10,9 +10,6 @@ import java.util.*;
  * @version 1.0.0
  */
 public final class BananaUtils {
-    private BananaUtils() {
-    }
-
     static final int FULL_WIDTH = 0;
     static final int FITTING = 1;
     static final int SMUSHING = 2;
@@ -36,12 +33,15 @@ public final class BananaUtils {
         flfMap = new HashMap<>();
     }
 
-    public static void setCacheable(boolean b) {
-        cacheable = b;
+    private BananaUtils() {
     }
 
     public static boolean isCacheable() {
         return cacheable;
+    }
+
+    public static void setCacheable(boolean b) {
+        cacheable = b;
     }
 
     public static List<String> fonts() {
