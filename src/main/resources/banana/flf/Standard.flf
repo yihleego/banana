@@ -1,7 +1,18 @@
-flf2a$ 6 5 16 15 4 0 24463 229
+flf2a$ 6 5 16 15 15 0 24463 229
 Standard by Glenn Chappell & Ian Chai 3/93 -- based on Frank's .sig
 Includes ISO Latin-1
 figlet release 2.1 -- 12 Aug 1994
+Modified for figlet 2.2 by John Cowan <cowan@ccil.org>
+  to add Latin-{2,3,4,5} support (Unicode U+0100-017F).
+Permission is hereby given to modify this font, as long as the
+modifier's name is placed on a comment line.
+
+Modified by Paul Burton <solution@earthlink.net> 12/96 to include new parameter
+supported by FIGlet and FIGWin.  May also be slightly modified for better use
+of new full-width/kern/smush alternatives, but default output is NOT changed.
+
+Font modified May 20, 2012 by patorjk to add the 0xCA0 character
+
 Modified by YihLeego <github.com/yihleego>> 09/18 to support Java.
  $@
  $@
