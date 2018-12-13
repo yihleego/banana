@@ -1,4 +1,4 @@
-package com.leego.standard.banana;
+package io.leego.banana;
 
 /**
  * Created by YihLeego on 2018.09.22 23:00
@@ -8,15 +8,15 @@ package com.leego.standard.banana;
  */
 public enum FittingRuleEnum {
 
-    VLAYOUT_SMUSHING(16384, "vLayout", BananaUtils.SMUSHING),
-    VLAYOUT_FITTING(8192, "vLayout", BananaUtils.FITTING),
+    VLAYOUT_SMUSHING(16384, "vLayout", FittingStyleEnum.SMUSHING.getValue()),
+    VLAYOUT_FITTING(8192, "vLayout", FittingStyleEnum.FITTING.getValue()),
     VRULE5(4096, "vRule5", 1),
     VRULE4(2048, "vRule4", 1),
     VRULE3(1024, "vRule3", 1),
     VRULE2(512, "vRule2", 1),
     VRULE1(256, "vRule1", 1),
-    HLAYOUT_SMUSHING(128, "hLayout", BananaUtils.SMUSHING),
-    HLAYOUT_FITTING(64, "hLayout", BananaUtils.FITTING),
+    HLAYOUT_SMUSHING(128, "hLayout", FittingStyleEnum.SMUSHING.getValue()),
+    HLAYOUT_FITTING(64, "hLayout", FittingStyleEnum.FITTING.getValue()),
     HRULE6(32, "hRule6", 1),
     HRULE5(16, "hRule5", 1),
     HRULE4(8, "hRule4", 1),
@@ -27,7 +27,6 @@ public enum FittingRuleEnum {
     private int code;
     private String name;
     private int value;
-
 
     FittingRuleEnum(int code, String name, int value) {
         this.code = code;

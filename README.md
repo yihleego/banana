@@ -7,7 +7,7 @@ A FIGlet Utils for Java.
 [FIGlet](https://en.wikipedia.org/wiki/FIGlet) is a computer program that generates text banners, in a variety of typefaces, composed of letters made up of conglomerations of smaller 
 ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)). The name derives from "Frank, Ian and Glenn's letters".
 
-Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHPand Python. FIGlet was featured as a Debian Package of the Day in 2007.
+Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
 
 ## Usage
 
