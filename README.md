@@ -9,6 +9,16 @@ ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)). The
 
 Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
 
+## Maven dependency
+
+```xml
+<dependency>
+    <groupId>io.leego</groupId>
+    <artifactId>banana</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
+
 ## Usage
 
 ### An example 
