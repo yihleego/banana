@@ -1,13 +1,9 @@
-package io.leego.banana;
+package io.leego.banana.bean;
 
 /**
- * Created by YihLeego on 2018.09.23 02:41
- *
  * @author YihLeego
- * @version 1.0.0
  */
 public class FittingRule {
-
     private Integer hLayout;
     private boolean hRule1;
     private boolean hRule2;
@@ -21,6 +17,10 @@ public class FittingRule {
     private boolean vRule3;
     private boolean vRule4;
     private boolean vRule5;
+
+    public static FittingRule build(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6, Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
+        return new FittingRule(hLayout, hRule1, hRule2, hRule3, hRule4, hRule5, hRule6, vLayout, vRule1, vRule2, vRule3, vRule4, vRule5);
+    }
 
     public FittingRule() {
     }
@@ -41,12 +41,23 @@ public class FittingRule {
         this.vRule5 = vRule5;
     }
 
-    public static FittingRule build() {
-        return new FittingRule();
+    public void set(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6) {
+        this.hLayout = hLayout;
+        this.hRule1 = hRule1;
+        this.hRule2 = hRule2;
+        this.hRule3 = hRule3;
+        this.hRule4 = hRule4;
+        this.hRule5 = hRule5;
+        this.hRule6 = hRule6;
     }
 
-    public static FittingRule build(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6, Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
-        return new FittingRule(hLayout, hRule1, hRule2, hRule3, hRule4, hRule5, hRule6, vLayout, vRule1, vRule2, vRule3, vRule4, vRule5);
+    public void set(Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
+        this.vLayout = vLayout;
+        this.vRule1 = vRule1;
+        this.vRule2 = vRule2;
+        this.vRule3 = vRule3;
+        this.vRule4 = vRule4;
+        this.vRule5 = vRule5;
     }
 
     public Integer gethLayout() {

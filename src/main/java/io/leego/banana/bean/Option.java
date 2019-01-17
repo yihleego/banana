@@ -1,10 +1,7 @@
-package io.leego.banana;
+package io.leego.banana.bean;
 
 /**
- * Created by YihLeego on 2018.09.23 02:41
- *
  * @author YihLeego
- * @version 1.0.0
  */
 public class Option {
 

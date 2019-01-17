@@ -1,234 +1,293 @@
 package io.leego.banana;
 
-import java.io.*;
+import io.leego.banana.bean.FittingRule;
+import io.leego.banana.bean.FlfHolder;
+import io.leego.banana.bean.Option;
+import io.leego.banana.enums.FittingLayoutEnum;
+import io.leego.banana.enums.FittingRuleEnum;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
- * Created by YihLeego on 2018.03.11 00:39
- *
  * @author YihLeego
- * @version 1.0.0
  */
 public final class BananaUtils {
-    private static final int FULL_WIDTH = FittingStyleEnum.FULL_WIDTH.getValue();
-    private static final int FITTING = FittingStyleEnum.FITTING.getValue();
-    private static final int SMUSHING = FittingStyleEnum.SMUSHING.getValue();
-    private static final int CONTROLLED_SMUSHING = FittingStyleEnum.CONTROLLED_SMUSHING.getValue();
+    private static final int DEFAULT = FittingLayoutEnum.DEFAULT.code();
+    private static final int FULL = FittingLayoutEnum.FULL.code();
+    private static final int FITTING = FittingLayoutEnum.FITTING.code();
+    private static final int SMUSHING = FittingLayoutEnum.SMUSHING.code();
+    private static final int CONTROLLED_SMUSHING = FittingLayoutEnum.CONTROLLED_SMUSHING.code();
     private static final String EMPTY = "";
     private static final String BLANK = " ";
     private static final String INVALID = "invalid";
     private static final String VALID = "valid";
     private static final String END = "end";
-    private static volatile boolean cacheable;
-    private static Map<String, FlfHolder> flfMap;
-
-    private static final String BANANA_ROOT_PATH = "banana/";
-    private static final String FLF_ROOT_PATH = BANANA_ROOT_PATH + "flf/";
-    private static final String FLF_NAME = BANANA_ROOT_PATH + "FLF_NAME";
+    private static final String ROOT_DIR_PATH = "banana/";
+    private static final String FLF_DIR_PATH = ROOT_DIR_PATH + "flf/";
+    private static final String FLF_NAME_PATH = ROOT_DIR_PATH + "FLF_NAME";
     private static final String STANDARD_FLF = "Standard";
     private static final String FLF_EXTENSION = ".flf";
-
-    static {
-        cacheable = true;
-        flfMap = new HashMap<>();
-    }
+    private static Map<String, FlfHolder> flfMap = new HashMap<>();
 
     private BananaUtils() {
     }
 
-    public static boolean isCacheable() {
-        return cacheable;
-    }
-
-    public static void setCacheable(boolean b) {
-        cacheable = b;
-    }
-
+    /**
+     * Get all fonts
+     * @return fonts
+     */
     public static List<String> fonts() {
         List<String> flfNameList = new ArrayList<>();
-        String flfNamePath = FLF_NAME;
-
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader dataReader = null;
         try {
-            inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(flfNamePath);
-            if (inputStream == null) {
-                File file = new File(flfNamePath);
-                if (!file.exists()) {
-                    return flfNameList;
-                }
-                inputStream = new FileInputStream(file);
-            }
-            inputStreamReader = new InputStreamReader(inputStream);
-            dataReader = new BufferedReader(inputStreamReader);
-
-            String line;
-            while ((line = dataReader.readLine()) != null) {
-                flfNameList.add(line.substring(0, line.lastIndexOf('.')));
-            }
-            return flfNameList;
-        } catch (IOException e) {
-            return flfNameList;
-        } finally {
+            inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(FLF_NAME_PATH);
             if (inputStream != null) {
-                try {
+                inputStreamReader = new InputStreamReader(inputStream);
+                dataReader = new BufferedReader(inputStreamReader);
+                String line;
+                while ((line = dataReader.readLine()) != null) {
+                    flfNameList.add(line.substring(0, line.lastIndexOf('.')));
+                }
+            }
+        } catch (IOException ignored) {
+        } finally {
+            try {
+                if (inputStream != null) {
                     inputStream.close();
-                } catch (IOException ignored) {
                 }
-            }
-            if (inputStreamReader != null) {
-                try {
+                if (inputStreamReader != null) {
                     inputStreamReader.close();
-                } catch (IOException ignored) {
                 }
-            }
-            if (dataReader != null) {
-                try {
+                if (dataReader != null) {
                     dataReader.close();
-                } catch (IOException ignored) {
                 }
+            } catch (IOException ignored) {
             }
         }
+        return flfNameList;
     }
 
     /**
-     * Generate FIGlet using Standard font
-     *
-     * @param value text
+     * Convert text to FIGlet using standard font
+     * @param text text
      * @return FIGlet
      */
-    public static String bananaify(String value) {
-        return bananaify(value, STANDARD_FLF);
+    public static String bananaify(String text) {
+        return bananaify(text, null);
     }
 
     /**
-     * Generate FIGlet by custom font
-     *
-     * @param value text
-     * @param font  Custom font
+     * Convert text to FIGlet using custom font
+     * @param text text
+     * @param font font
      * @return FIGlet
      */
-    public static String bananaify(String value, String font) {
+    public static String bananaify(String text, String font) {
+        return bananaify(text, font, (FittingLayoutEnum) null, null);
+    }
+
+    /**
+     * Convert text to FIGlet using custom font
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout option: "default", "full", "fitting", "smushing", "controlled_smushing"
+     * @param verticalLayout   option: "default", "full", "fitting", "smushing", "controlled_smushing"
+     * @return FIGlet
+     */
+    public static String bananaify(String text, String font, String horizontalLayout, String verticalLayout) {
+        return bananaify(
+                text, font,
+                FittingLayoutEnum.getByValue(horizontalLayout),
+                FittingLayoutEnum.getByValue(verticalLayout)
+        );
+    }
+
+    /**
+     * Convert text to FIGlet using custom font
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout option: 0(default), 1(full), 2(fitting), 3(smushing), 4(controlled_smushing)
+     * @param verticalLayout   option: 0(default), 1(full), 2(fitting), 3(smushing), 4(controlled_smushing)
+     * @return FIGlet
+     */
+    public static String bananaify(String text, String font, Integer horizontalLayout, Integer verticalLayout) {
+        return bananaify(
+                text, font,
+                FittingLayoutEnum.getByCode(horizontalLayout),
+                FittingLayoutEnum.getByCode(verticalLayout)
+        );
+    }
+
+    /**
+     * Convert text to FIGlet using custom font
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout {@link FittingLayoutEnum}
+     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @return FIGlet
+     */
+    public static String bananaify(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+        String[] texts = bananaifyArray(text, font, horizontalLayout, verticalLayout);
+        if (texts == null) {
+            return null;
+        }
+        if (texts.length == 0) {
+            return EMPTY;
+        }
         StringBuilder sb = new StringBuilder();
-        String[] texts = bananaifyArray(value, font);
-        for (int i = 0; i < texts.length; i++) {
-            sb.append(texts[i]);
-            if (i != texts.length - 1) {
-                sb.append("\n");
-            }
+        for (String s : texts) {
+            sb.append(s).append("\n");
+        }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
         }
         return sb.toString();
     }
 
     /**
      * Generate FIGlet by custom font
-     *
-     * @param value text
-     * @param font  Custom font
-     * @return Array of FIGlet
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout option: 0(default), 1(full), 2(fitting), 3(smushing), 4(controlled_smushing)
+     * @param verticalLayout   option: 0(default), 1(full), 2(fitting), 3(smushing), 4(controlled_smushing)
+     * @return Text array of FIGlet
      */
-    public static String[] bananaifyArray(String value, String font) {
-        String[] texts;
-        try {
-            texts = generateText(value, FLF_ROOT_PATH + font + FLF_EXTENSION);
-        } catch (IOException e) {
-            return new String[0];
-        }
-        return texts;
+    public static String[] bananaifyArray(String text, String font, Integer horizontalLayout, Integer verticalLayout) {
+        return bananaifyArray(text, font,
+                FittingLayoutEnum.getByCode(horizontalLayout),
+                FittingLayoutEnum.getByCode(verticalLayout)
+        );
     }
 
-    private static String[] generateText(String value, String path) throws IOException {
-        String comment;
-        Option option;
-        Map<Integer, String[]> figCharMap;
+    /**
+     * Generate FIGlet by custom font
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout option: "default", "full", "fitting", "smushing", "controlled_smushing"
+     * @param verticalLayout   option: "default", "full", "fitting", "smushing", "controlled_smushing"
+     * @return Text array of FIGlet
+     */
+    public static String[] bananaifyArray(String text, String font, String horizontalLayout, String verticalLayout) {
+        return bananaifyArray(text, font,
+                FittingLayoutEnum.getByValue(horizontalLayout),
+                FittingLayoutEnum.getByValue(verticalLayout)
+        );
+    }
 
-        if (flfMap.containsKey(path)) {
-            FlfHolder flfHolder = flfMap.get(path);
-            option = flfHolder.getOption();
-            figCharMap = flfHolder.getFigCharMap();
-        } else {
-            option = new Option();
-            StringBuilder sbComment = new StringBuilder();
-            figCharMap = new HashMap<>(192);
-            List<String> dataList = new ArrayList<>(3072);
+    /**
+     * Generate FIGlet by custom font
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout {@link FittingLayoutEnum}
+     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @return Text array of FIGlet
+     */
+    public static String[] bananaifyArray(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+        return generateText(text, font, horizontalLayout, verticalLayout);
+    }
 
-            InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
-            if (inputStream == null) {
-                File file = new File(path);
-                if (!file.exists()) {
-                    return new String[0];
-                }
-                inputStream = new FileInputStream(new File(path));
-            }
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader dataReader = new BufferedReader(inputStreamReader);
-            String[] headerData = dataReader.readLine().split(BLANK);
-
-            option.setHardBlank(headerData[0].substring(5));
-            option.setHeight(Integer.parseInt(headerData[1]));
-            option.setBaseline(Integer.parseInt(headerData[2]));
-            option.setMaxLength(Integer.parseInt(headerData[3]));
-            option.setOldLayout(Integer.parseInt(headerData[4]));
-            option.setNumCommentLines(Integer.parseInt(headerData[5]));
-            option.setPrintDirection(headerData.length > 6 ? Integer.parseInt(headerData[6]) : 0);
-            option.setFullLayout(headerData.length > 7 ? Integer.parseInt(headerData[7]) : null);
-            option.setCodeTagCount(headerData.length > 8 ? Integer.parseInt(headerData[8]) : null);
-            option.setFittingRule(getSmushingRules(option.getOldLayout(), option.getFullLayout()));
-
-            int x = 0;
-            String line;
-            while ((line = dataReader.readLine()) != null) {
-                if (x++ >= option.getNumCommentLines()) {
-                    dataList.add(line);
-                } else {
-                    sbComment.append(line).append("\n");
-                }
-            }
-            dataReader.close();
-            inputStreamReader.close();
-            inputStream.close();
-
-            comment = sbComment.toString();
-
-            List<Integer> charCodeList = new ArrayList<>();
-            for (int i = 32; i <= 126; i++) {
-                charCodeList.add(i);
-            }
-            Integer[] extraCodes = new Integer[]{196, 214, 220, 228, 246, 252, 223};
-            charCodeList.addAll(Arrays.asList(extraCodes));
-
-            String mark = substr(dataList.get(0), dataList.get(0).length() - 1, 1);
-            if (isEmpty(mark)) {
-                mark = "@";
-            }
-            int height = option.getHeight();
-            for (int i = 0; i < charCodeList.size(); i++) {
-                String[] fig = new String[height];
-                figCharMap.put(charCodeList.get(i), fig);
-                for (int j = 0; j < height; j++) {
-                    fig[j] = dataList.get(i * height + j)
-                            .replace(mark, EMPTY)
-                            .replace("&gt;", ">")
-                            .replace("&lt;", "<")
-                            .replace("&amp;", "&");
-                }
-            }
-            if (isCacheable()) {
-                // double check
-                synchronized (BananaUtils.class) {
-                    if (!flfMap.containsKey(path)) {
-                        FlfHolder flfHolder = new FlfHolder(path, comment, option, figCharMap);
-                        flfMap.put(path, flfHolder);
-                    }
-                }
-            }
+    private static FlfHolder getHolder(String font) throws IOException {
+        FlfHolder holder;
+        if (font == null) {
+            font = STANDARD_FLF;
+        }
+        holder = flfMap.get(font);
+        if (holder != null) {
+            return holder;
         }
 
-        String[] contexts = value.split("\n");
-        String[][] texts = new String[contexts.length][];
-        for (int i = 0; i < contexts.length; i++) {
-            texts[i] = generateFigTextLine(contexts[i], figCharMap, option);
+        String path = FLF_DIR_PATH + font + FLF_EXTENSION;
+        Option option = new Option();
+        StringBuilder sbComment = new StringBuilder();
+        Map<Integer, String[]> figCharMap = new HashMap<>(192);
+        List<String> dataList = new ArrayList<>(3072);
+
+        InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+        if (inputStream == null) {
+            return null;
+        }
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader dataReader = new BufferedReader(inputStreamReader);
+        String[] headerData = dataReader.readLine().split(BLANK);
+
+        option.setHardBlank(headerData[0].substring(5));
+        option.setHeight(Integer.parseInt(headerData[1]));
+        option.setBaseline(Integer.parseInt(headerData[2]));
+        option.setMaxLength(Integer.parseInt(headerData[3]));
+        option.setOldLayout(Integer.parseInt(headerData[4]));
+        option.setNumCommentLines(Integer.parseInt(headerData[5]));
+        option.setPrintDirection(headerData.length > 6 ? Integer.parseInt(headerData[6]) : 0);
+        option.setFullLayout(headerData.length > 7 ? Integer.parseInt(headerData[7]) : null);
+        option.setCodeTagCount(headerData.length > 8 ? Integer.parseInt(headerData[8]) : null);
+        option.setFittingRule(getSmushingRules(option.getOldLayout(), option.getFullLayout()));
+
+        String line;
+        // read comment
+        int num = 0;
+        while ((line = dataReader.readLine()) != null) {
+            sbComment.append(line).append("\n");
+            if (++num >= option.getNumCommentLines()) {
+                break;
+            }
+        }
+        // read data
+        while ((line = dataReader.readLine()) != null) {
+            dataList.add(line);
+        }
+        dataReader.close();
+        inputStreamReader.close();
+        inputStream.close();
+
+        // ascii code: 32 = space (' '), 126 = tilde ('~')
+        List<Integer> charCodeList = new ArrayList<>();
+        for (int i = 32; i <= 126; i++) {
+            charCodeList.add(i);
+        }
+        // extra codes
+        // Collections.addAll(charCodeList,196, 214, 220, 228, 246, 252, 223);
+
+        String mark = dataList.get(0).substring(dataList.get(0).length() - 1);
+        if (isEmpty(mark)) {
+            mark = "@";
+        }
+        int height = option.getHeight();
+        for (int i = 0; i < charCodeList.size(); i++) {
+            String[] fig = new String[height];
+            figCharMap.put(charCodeList.get(i), fig);
+            for (int j = 0; j < height; j++) {
+                fig[j] = dataList.get(i * height + j).replace(mark, EMPTY);
+            }
+        }
+        holder = new FlfHolder(font, sbComment.toString().trim(), option, figCharMap);
+        flfMap.put(font, holder);
+        return holder;
+    }
+
+    private static String[] generateText(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+        FlfHolder holder;
+        try {
+            holder = getHolder(font);
+        } catch (IOException e) {
+            holder = null;
+        }
+        if (holder == null) {
+            return new String[0];
+        }
+        Option option = holder.getOption();
+        Map<Integer, String[]> figCharMap = holder.getFigCharMap();
+        setHorizontalLayout(option, horizontalLayout);
+        setVerticalLayout(option, verticalLayout);
+
+        String[] lines = text.split("\n");
+        String[][] texts = new String[lines.length][];
+        for (int i = 0; i < lines.length; i++) {
+            texts[i] = generateFigTextLine(lines[i], figCharMap, option);
         }
         String[] output = texts[0];
         for (int i = 1; i < texts.length; i++) {
@@ -237,32 +296,60 @@ public final class BananaUtils {
         return output;
     }
 
-    private static String[] generateFigTextLine(String txt, Map<Integer, String[]> figChars, Option opts) {
+    private static String[] generateFigTextLine(String text, Map<Integer, String[]> figCharMap, Option option) {
         int overlap = 0;
-        String[] outputFigText = new String[opts.getHeight()];
+        String[] outputFigText = new String[option.getHeight()];
 
-        for (int i = 0; i < opts.getHeight(); i++) {
+        for (int i = 0; i < option.getHeight(); i++) {
             outputFigText[i] = EMPTY;
         }
-        for (int charIndex = 0; charIndex < txt.length(); charIndex++) {
-            String[] figChar = figChars.get((int) txt.charAt(charIndex));
+        for (int charIndex = 0; charIndex < text.length(); charIndex++) {
+            String[] figChar = figCharMap.get((int) text.charAt(charIndex));
             if (figChar != null) {
-                if (opts.getFittingRule().gethLayout() != FULL_WIDTH) {
-                    // a value too high to be the overlap
+                if (option.getFittingRule().gethLayout() != FULL) {
                     overlap = 10000;
-                    for (int i = 0; i < opts.getHeight(); i++) {
-                        overlap = Math.min(overlap, getHorizontalSmushLength(outputFigText[i], figChar[i], opts));
+                    for (int i = 0; i < option.getHeight(); i++) {
+                        overlap = Math.min(overlap, getHorizontalSmushLength(outputFigText[i], figChar[i], option));
                     }
                     overlap = (overlap == 10000) ? 0 : overlap;
                 }
-                outputFigText = horizontalSmush(outputFigText, figChar, overlap, opts);
+                outputFigText = horizontalSmush(outputFigText, figChar, overlap, option);
             }
         }
-        // remove hardblanks
         for (int i = 0; i < outputFigText.length; i++) {
-            outputFigText[i] = outputFigText[i].replace(opts.getHardBlank(), BLANK);
+            outputFigText[i] = outputFigText[i].replace(option.getHardBlank(), BLANK);
         }
         return outputFigText;
+    }
+
+    private static void setHorizontalLayout(Option option, FittingLayoutEnum layout) {
+        if (layout == null) {
+            return;
+        }
+        if (layout.code() == FULL) {
+            option.getFittingRule().set(FULL, false, false, false, false, false, false);
+        } else if (layout.code() == FITTING) {
+            option.getFittingRule().set(FITTING, false, false, false, false, false, false);
+        } else if (layout.code() == SMUSHING) {
+            option.getFittingRule().set(SMUSHING, false, false, false, false, false, false);
+        } else if (layout.code() == CONTROLLED_SMUSHING) {
+            option.getFittingRule().set(CONTROLLED_SMUSHING, true, true, true, true, true, true);
+        }
+    }
+
+    private static void setVerticalLayout(Option option, FittingLayoutEnum layout) {
+        if (layout == null) {
+            return;
+        }
+        if (layout.code() == FULL) {
+            option.getFittingRule().set(FULL, false, false, false, false, false);
+        } else if (layout.code() == FITTING) {
+            option.getFittingRule().set(FITTING, false, false, false, false, false);
+        } else if (layout.code() == SMUSHING) {
+            option.getFittingRule().set(SMUSHING, false, false, false, false, false);
+        } else if (layout.code() == CONTROLLED_SMUSHING) {
+            option.getFittingRule().set(CONTROLLED_SMUSHING, true, true, true, true, true);
+        }
     }
 
     private static String[] horizontalSmush(String[] textBlock1, String[] textBlock2, int overlap, Option opts) {
@@ -290,7 +377,6 @@ public final class BananaUtils {
                     } else if (opts.getFittingRule().gethLayout() == SMUSHING) {
                         piece2.append(uniSmush(ch1, ch2, opts.getHardBlank()));
                     } else {
-                        // Controlled Smushing
                         String nextCh = EMPTY;
                         nextCh = (isEmpty(nextCh) && opts.getFittingRule().ishRule1())
                                 ? hRule1Smush(ch1, ch2, opts.getHardBlank()) : nextCh;
@@ -322,7 +408,7 @@ public final class BananaUtils {
      * main horizontal smush routines (excluding rules)
      */
     private static int getHorizontalSmushLength(String txt1, String txt2, Option opts) {
-        if (opts.getFittingRule().gethLayout() == FULL_WIDTH) {
+        if (opts.getFittingRule().gethLayout() == FULL) {
             return 0;
         }
         int len1 = txt1.length();
@@ -403,8 +489,7 @@ public final class BananaUtils {
         FittingRuleEnum[] fittingRules = FittingRuleEnum.values();
         int val = newLayout != null ? newLayout : oldLayout;
 
-        for (int i = 0; i < fittingRules.length; ++i) {
-            FittingRuleEnum fittingRule = fittingRules[i];
+        for (FittingRuleEnum fittingRule : fittingRules) {
             int code = fittingRule.getCode();
             String name = fittingRule.getName();
             int value = fittingRule.getValue();
@@ -422,7 +507,7 @@ public final class BananaUtils {
             if (oldLayout == 0) {
                 rules.put("hLayout", FITTING);
             } else if (oldLayout == -1) {
-                rules.put("hLayout", FULL_WIDTH);
+                rules.put("hLayout", FULL);
             } else {
                 if (equals(rules.get("hRule1"), 1)
                         || equals(rules.get("hRule2"), 1)
@@ -454,7 +539,7 @@ public final class BananaUtils {
                     || equals(rules.get("vRule5"), 1)) {
                 rules.put("vLayout", CONTROLLED_SMUSHING);
             } else {
-                rules.put("vLayout", FULL_WIDTH);
+                rules.put("vLayout", FULL);
             }
         } else if (equals(rules.get("vLayout"), SMUSHING)) {
             if (equals(rules.get("vRule1"), 1)
@@ -559,7 +644,7 @@ public final class BananaUtils {
      * "invalid" - The two lines cannot be smushed together
      */
     private static String canVerticalSmush(String txt1, String txt2, Option opts) {
-        if (opts.getFittingRule().getvLayout() == FULL_WIDTH) {
+        if (opts.getFittingRule().getvLayout() == FULL) {
             return INVALID;
         }
         int len = Math.min(txt1.length(), txt2.length());
@@ -858,24 +943,8 @@ public final class BananaUtils {
         return ch2;
     }
 
-    private static String substr(String s, int start, int length) {
-        if (isEmpty(s)) {
-            return EMPTY;
-        }
-        return s.substring(start, Math.min(start + length, s.length()));
-    }
-
-    private static String[] slice(String[] array, int start, int end) {
-        String[] result = new String[end - start];
-        int index = 0;
-        for (int i = start; i < end; i++) {
-            result[index++] = array[i];
-        }
-        return result;
-    }
-
     private static String[] concat(String[]... pieces) {
-        if (pieces == null) {
+        if (pieces == null || pieces.length == 0) {
             return new String[0];
         }
         int length = 0;
@@ -888,6 +957,22 @@ public final class BananaUtils {
             for (String s : piece) {
                 result[i++] = s;
             }
+        }
+        return result;
+    }
+
+    private static String substr(String s, int start, int length) {
+        if (isEmpty(s)) {
+            return EMPTY;
+        }
+        return s.substring(start, Math.min(start + length, s.length()));
+    }
+
+    private static String[] slice(String[] array, int start, int end) {
+        String[] result = new String[end - start];
+        int index = 0;
+        for (int i = start; i < end; i++) {
+            result[index++] = array[i];
         }
         return result;
     }
