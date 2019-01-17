@@ -1,22 +1,25 @@
-package io.leego.banana;
+package io.leego.banana.bean;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by YihLeego on 2018.09.23 02:41
- *
  * @author YihLeego
- * @version 1.0.0
  */
 public class FlfHolder {
     private String name;
     private String comment;
-    private List<String> dataList;
     private Option option;
+    private List<String> dataList;
     private Map<Integer, String[]> figCharMap;
 
     public FlfHolder() {
+    }
+
+    public FlfHolder(String name, Option option, Map<Integer, String[]> figCharMap) {
+        this.name = name;
+        this.option = option;
+        this.figCharMap = figCharMap;
     }
 
     public FlfHolder(String name, String comment, Option option, Map<Integer, String[]> figCharMap) {
@@ -26,7 +29,7 @@ public class FlfHolder {
         this.figCharMap = figCharMap;
     }
 
-    public FlfHolder(String name, String comment, List<String> dataList, Option option, Map<Integer, String[]> figCharMap) {
+    public FlfHolder(String name, String comment, Option option, List<String> dataList, Map<Integer, String[]> figCharMap) {
         this.name = name;
         this.comment = comment;
         this.dataList = dataList;

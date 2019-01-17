@@ -9,14 +9,22 @@ ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)). The
 
 Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
 
-## Maven dependency
+## Dependency
+
+### Maven
 
 ```xml
 <dependency>
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
+```
+
+### Gradle
+
+```xml
+implementation 'io.leego:banana:1.2.0'
 ```
 
 ## Usage
@@ -109,6 +117,38 @@ Examples:
  |_| |_|\___|_|_|\___( )  \____|_|\__|_| |_|\__,_|_.__/(_)
                      |/            
 ```
+
+
+### Fitting Layout
+
+```java
+BananaUtils.bananaify(
+        "Hello, Github!",
+        BananaUtils.LAYOUT_FULL,
+        BananaUtils.LAYOUT_FULL
+);
+```
+Output:
+```
+  _   _          _   _                  ____   _   _     _               _       _ 
+ | | | |   ___  | | | |   ___          / ___| (_) | |_  | |__    _   _  | |__   | |
+ | |_| |  / _ \ | | | |  / _ \        | |  _  | | | __| | '_ \  | | | | | '_ \  | |
+ |  _  | |  __/ | | | | | (_) |  _    | |_| | | | | |_  | | | | | |_| | | |_) | |_|
+ |_| |_|  \___| |_| |_|  \___/  ( )    \____| |_|  \__| |_| |_|  \__,_| |_.__/  (_)
+                                |/                                                 
+```
+
+
+### ANSI escape code
+
+```java
+// Customize font color or style of the console
+BananaUtils.bananansi(
+        "Hello, Github!",
+        AnsiEnum.RED, AnsiEnum.B_YELLOW, AnsiEnum.BOLD
+);
+```
+
 
 ## More
 
