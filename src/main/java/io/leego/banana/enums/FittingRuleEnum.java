@@ -30,15 +30,15 @@ public enum FittingRuleEnum {
         this.value = value;
     }
 
-    public int getCode() {
+    public int code() {
         return code;
     }
 
-    public String getKey() {
+    public String key() {
         return key;
     }
 
-    public int getValue() {
+    public int value() {
         return value;
     }
 }

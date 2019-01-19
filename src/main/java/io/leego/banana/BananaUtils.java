@@ -3,6 +3,7 @@ package io.leego.banana;
 import io.leego.banana.bean.FittingRule;
 import io.leego.banana.bean.FlfHolder;
 import io.leego.banana.bean.Option;
+import io.leego.banana.enums.AnsiEnum;
 import io.leego.banana.enums.FittingLayoutEnum;
 import io.leego.banana.enums.FittingRuleEnum;
 
@@ -79,7 +80,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using custom font
+     * Convert text to FIGlet using standard font
      * @param text             text
      * @param horizontalLayout {@link FittingLayoutEnum}
      * @param verticalLayout   {@link FittingLayoutEnum}
@@ -97,22 +98,6 @@ public final class BananaUtils {
      */
     public static String bananaify(String text, String font) {
         return bananaify(text, font, (FittingLayoutEnum) null, null);
-    }
-
-    /**
-     * Convert text to FIGlet using custom font
-     * @param text             text
-     * @param font             font
-     * @param horizontalLayout option: "default", "full", "fitting", "smushing", "controlled_smushing"
-     * @param verticalLayout   option: "default", "full", "fitting", "smushing", "controlled_smushing"
-     * @return FIGlet
-     */
-    public static String bananaify(String text, String font, String horizontalLayout, String verticalLayout) {
-        return bananaify(
-                text, font,
-                FittingLayoutEnum.getByValue(horizontalLayout),
-                FittingLayoutEnum.getByValue(verticalLayout)
-        );
     }
 
     /**
@@ -159,7 +144,67 @@ public final class BananaUtils {
 
 
     /**
-     * Generate FIGlet by custom font
+     * Convert text to FIGlet using standard font and ANSI escape code
+     * @param text text
+     * @param e    {@link AnsiEnum}
+     * @return FIGlet
+     */
+    public static String bananansi(String text, AnsiEnum e) {
+        if (e == null) {
+            return bananaify(text);
+        }
+        return e.ansi() + bananaify(text) + AnsiEnum.NORMAL.ansi();
+    }
+
+    /**
+     * Convert text to FIGlet using standard font and ANSI escape code
+     * @param text  text
+     * @param enums {@link AnsiEnum} array
+     * @return FIGlet
+     */
+    public static String bananansi(String text, AnsiEnum... enums) {
+        return bananansi(text, null, null, null, enums);
+    }
+
+    /**
+     * Convert text to FIGlet using standard font and ANSI escape code
+     * @param text             text
+     * @param horizontalLayout {@link FittingLayoutEnum}
+     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @param enums            {@link AnsiEnum} array
+     * @return FIGlet
+     */
+    public static String bananansi(String text, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout, AnsiEnum... enums) {
+        return bananansi(text, null, horizontalLayout, verticalLayout, enums);
+    }
+
+    /**
+     * Convert text to FIGlet using custom font and ANSI escape code
+     * @param text  text
+     * @param font  font
+     * @param enums {@link AnsiEnum} array
+     * @return FIGlet
+     */
+    public static String bananansi(String text, String font, AnsiEnum... enums) {
+        return bananansi(text, font, null, null, enums);
+    }
+
+    /**
+     * Convert text to FIGlet using custom font and ANSI escape code
+     * @param text             text
+     * @param font             font
+     * @param horizontalLayout {@link FittingLayoutEnum}
+     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @param enums            {@link AnsiEnum} array
+     * @return FIGlet
+     */
+    public static String bananansi(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout, AnsiEnum... enums) {
+        return AnsiEnum.multiple(bananaify(text, font, horizontalLayout, verticalLayout), enums);
+    }
+
+
+    /**
+     * Generate text array of FIGlet
      * @param text             text
      * @param font             font
      * @param horizontalLayout {@link FittingLayoutEnum}
@@ -464,33 +509,33 @@ public final class BananaUtils {
         FittingRuleEnum[] fittingRules = FittingRuleEnum.values();
         int val = newLayout != null ? newLayout : oldLayout;
         for (FittingRuleEnum fittingRule : fittingRules) {
-            int code = fittingRule.getCode();
-            String name = fittingRule.getKey();
-            int value = fittingRule.getValue();
+            int code = fittingRule.code();
+            String name = fittingRule.key();
+            int value = fittingRule.value();
             if (val >= code) {
                 val -= code;
                 if (!rules.containsKey(name)) {
                     rules.put(name, value);
                 }
-            } else if (!FittingRuleEnum.H_LAYOUT_SMUSHING.getKey().equals(name)
-                    && !FittingRuleEnum.V_LAYOUT_SMUSHING.getKey().equals(name)) {
+            } else if (!FittingRuleEnum.H_LAYOUT_SMUSHING.key().equals(name)
+                    && !FittingRuleEnum.V_LAYOUT_SMUSHING.key().equals(name)) {
                 rules.put(name, 0);
             }
         }
         FittingRule rule = FittingRule.build(
-                rules.get(FittingRuleEnum.H_LAYOUT_SMUSHING.getKey()),
-                equals(rules.get(FittingRuleEnum.H_RULE1.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE2.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE3.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE4.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE5.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE6.getKey()), 1),
-                rules.get(FittingRuleEnum.V_LAYOUT_SMUSHING.getKey()),
-                equals(rules.get(FittingRuleEnum.V_RULE1.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE2.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE3.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE4.getKey()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE5.getKey()), 1)
+                rules.get(FittingRuleEnum.H_LAYOUT_SMUSHING.key()),
+                equals(rules.get(FittingRuleEnum.H_RULE1.key()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE2.key()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE3.key()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE4.key()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE5.key()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE6.key()), 1),
+                rules.get(FittingRuleEnum.V_LAYOUT_SMUSHING.key()),
+                equals(rules.get(FittingRuleEnum.V_RULE1.key()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE2.key()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE3.key()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE4.key()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE5.key()), 1)
         );
         if (rule.gethLayout() == null) {
             if (oldLayout == 0) {

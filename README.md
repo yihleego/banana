@@ -15,7 +15,7 @@ Being free software, FIGlet is commonly included as part of many Unix-like opera
 <dependency>
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -109,6 +109,38 @@ Examples:
  |_| |_|\___|_|_|\___( )  \____|_|\__|_| |_|\__,_|_.__/(_)
                      |/            
 ```
+
+
+### Fitting Layout
+
+```java
+BananaUtils.bananaify(
+        "Hello, Github!",
+        BananaUtils.LAYOUT_FULL,
+        BananaUtils.LAYOUT_FULL
+);
+```
+Output:
+```
+  _   _          _   _                  ____   _   _     _               _       _ 
+ | | | |   ___  | | | |   ___          / ___| (_) | |_  | |__    _   _  | |__   | |
+ | |_| |  / _ \ | | | |  / _ \        | |  _  | | | __| | '_ \  | | | | | '_ \  | |
+ |  _  | |  __/ | | | | | (_) |  _    | |_| | | | | |_  | | | | | |_| | | |_) | |_|
+ |_| |_|  \___| |_| |_|  \___/  ( )    \____| |_|  \__| |_| |_|  \__,_| |_.__/  (_)
+                                |/                                                 
+```
+
+
+### ANSI escape code
+
+```java
+// Customize font color or style of the console
+BananaUtils.bananansi(
+        "Hello, Github!",
+        AnsiEnum.RED, AnsiEnum.B_YELLOW, AnsiEnum.BOLD
+);
+```
+
 
 ## More
 
