@@ -54,7 +54,6 @@
     </properties>
 
     <build>
-        <finalName>banana</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
