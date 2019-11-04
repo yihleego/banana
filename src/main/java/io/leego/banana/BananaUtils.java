@@ -11,7 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author YihLeego
@@ -1030,13 +1033,13 @@ public final class BananaUtils {
     /**
      * Returns {@code true} if the arguments are equal to each other
      * and {@code false} otherwise.
-     * @param o1 an object
-     * @param o2 an object to be compared with {@code a} for equality
+     * @param a an object
+     * @param b an object to be compared with {@code a} for equality
      * @return {@code true} if the arguments are equal to each other
      * and {@code false} otherwise
      */
-    private static boolean equals(Object o1, Object o2) {
-        return Objects.equals(o1, o2);
+    private static boolean equals(Object a, Object b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 
 }
