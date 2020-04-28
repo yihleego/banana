@@ -1,9 +1,9 @@
 package io.leego.banana.enums;
 
 /**
- * @author YihLeego
+ * @author Yihleego
  */
-public enum FittingLayoutEnum {
+public enum FittingLayout {
     DEFAULT(-1, "default"),
     FULL(0, "full"),
     FITTING(1, "fitting"),
@@ -13,24 +13,24 @@ public enum FittingLayoutEnum {
     private final int code;
     private final String value;
 
-    FittingLayoutEnum(int code, String value) {
+    FittingLayout(int code, String value) {
         this.code = code;
         this.value = value;
     }
 
-    public int code() {
+    public int getCode() {
         return code;
     }
 
-    public String value() {
+    public String getValue() {
         return value;
     }
 
-    public static FittingLayoutEnum getByCode(Integer code) {
+    public static FittingLayout getByCode(Integer code) {
         if (code == null) {
             return null;
         }
-        for (FittingLayoutEnum e : values()) {
+        for (FittingLayout e : values()) {
             if (code == e.code) {
                 return e;
             }
@@ -38,11 +38,11 @@ public enum FittingLayoutEnum {
         return null;
     }
 
-    public static FittingLayoutEnum getByValue(String value) {
+    public static FittingLayout getByValue(String value) {
         if (value == null) {
             return null;
         }
-        for (FittingLayoutEnum e : values()) {
+        for (FittingLayout e : values()) {
             if (value.equalsIgnoreCase(e.value)) {
                 return e;
             }
@@ -54,7 +54,7 @@ public enum FittingLayoutEnum {
         if (value == null) {
             return null;
         }
-        FittingLayoutEnum e = getByValue(value);
+        FittingLayout e = getByValue(value);
         if (e != null) {
             return e.code;
         }

@@ -1,7 +1,7 @@
 package io.leego.banana.bean;
 
 /**
- * @author YihLeego
+ * @author Yihleego
  */
 public class FittingRule {
     private Integer hLayout;
@@ -18,14 +18,11 @@ public class FittingRule {
     private boolean vRule4;
     private boolean vRule5;
 
-    public static FittingRule build(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6, Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
-        return new FittingRule(hLayout, hRule1, hRule2, hRule3, hRule4, hRule5, hRule6, vLayout, vRule1, vRule2, vRule3, vRule4, vRule5);
-    }
-
     public FittingRule() {
     }
 
-    public FittingRule(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6, Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
+    public FittingRule(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6,
+                       Integer vLayout, boolean vRule1, boolean vRule2, boolean vRule3, boolean vRule4, boolean vRule5) {
         this.hLayout = hLayout;
         this.hRule1 = hRule1;
         this.hRule2 = hRule2;
@@ -39,6 +36,11 @@ public class FittingRule {
         this.vRule3 = vRule3;
         this.vRule4 = vRule4;
         this.vRule5 = vRule5;
+    }
+
+    public FittingRule copy() {
+        return new FittingRule(hLayout, hRule1, hRule2, hRule3, hRule4, hRule5, hRule6,
+                vLayout, vRule1, vRule2, vRule3, vRule4, vRule5);
     }
 
     public void set(Integer hLayout, boolean hRule1, boolean hRule2, boolean hRule3, boolean hRule4, boolean hRule5, boolean hRule6) {

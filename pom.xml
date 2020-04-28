@@ -36,7 +36,7 @@
 
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
     <name>banana</name>
 

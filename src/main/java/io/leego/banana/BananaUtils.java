@@ -3,8 +3,8 @@ package io.leego.banana;
 import io.leego.banana.bean.FittingRule;
 import io.leego.banana.bean.FlfHolder;
 import io.leego.banana.bean.Option;
-import io.leego.banana.enums.AnsiEnum;
-import io.leego.banana.enums.FittingLayoutEnum;
+import io.leego.banana.enums.Ansi;
+import io.leego.banana.enums.FittingLayout;
 import io.leego.banana.enums.FittingRuleEnum;
 
 import java.io.BufferedReader;
@@ -15,40 +15,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author YihLeego
+ * @author Yihleego
  */
 public final class BananaUtils {
-    public static final FittingLayoutEnum LAYOUT_DEFAULT = FittingLayoutEnum.DEFAULT;
-    public static final FittingLayoutEnum LAYOUT_FULL = FittingLayoutEnum.FULL;
-    public static final FittingLayoutEnum LAYOUT_FITTING = FittingLayoutEnum.FITTING;
-    public static final FittingLayoutEnum LAYOUT_SMUSH_U = FittingLayoutEnum.SMUSHING;
-    public static final FittingLayoutEnum LAYOUT_SMUSH_R = FittingLayoutEnum.CONTROLLED_SMUSHING;
-
-    private static final int DEFAULT = LAYOUT_DEFAULT.code();
-    private static final int FULL = LAYOUT_FULL.code();
-    private static final int FITTING = LAYOUT_FITTING.code();
-    private static final int SMUSHING = LAYOUT_SMUSH_U.code();
-    private static final int CONTROLLED_SMUSHING = LAYOUT_SMUSH_R.code();
+    public static final FittingLayout LAYOUT_DEFAULT = FittingLayout.DEFAULT;
+    public static final FittingLayout LAYOUT_FULL = FittingLayout.FULL;
+    public static final FittingLayout LAYOUT_FITTING = FittingLayout.FITTING;
+    public static final FittingLayout LAYOUT_SMUSH_U = FittingLayout.SMUSHING;
+    public static final FittingLayout LAYOUT_SMUSH_R = FittingLayout.CONTROLLED_SMUSHING;
+    private static final int DEFAULT = LAYOUT_DEFAULT.getCode();
+    private static final int FULL = LAYOUT_FULL.getCode();
+    private static final int FITTING = LAYOUT_FITTING.getCode();
+    private static final int SMUSHING = LAYOUT_SMUSH_U.getCode();
+    private static final int CONTROLLED_SMUSHING = LAYOUT_SMUSH_R.getCode();
     private static final String EMPTY = "";
     private static final String BLANK = " ";
     private static final String INVALID = "invalid";
     private static final String VALID = "valid";
     private static final String END = "end";
-    private static final String RULE_2_EXP = "|/\\[]{}()<>";
-    private static final String RULE_3_EXP = "| /\\ [] {} () <>";
-    private static final String RULE_4_EXP = "[] {} ()";
-    private static final String RULE_5_EXP = "/\\ \\/ ><";
     private static final String ROOT_DIR_PATH = "banana/";
     private static final String FLF_DIR_PATH = ROOT_DIR_PATH + "flf/";
     private static final String FLF_NAME_PATH = ROOT_DIR_PATH + "FLF_NAME";
     private static final String STANDARD_FLF = "Standard";
     private static final String FLF_EXTENSION = ".flf";
-    private static Map<String, FlfHolder> flfMap = new HashMap<>();
+    private static final ConcurrentMap<String, FlfHolder> flfMap = new ConcurrentHashMap<>();
 
-    private BananaUtils() {
-    }
+    private BananaUtils() {}
 
     /**
      * Get all fonts
@@ -69,6 +65,7 @@ public final class BananaUtils {
             dataReader.close();
             inputStreamReader.close();
         } catch (IOException ignored) {
+            // ignored
         }
         return fontList;
     }
@@ -85,11 +82,11 @@ public final class BananaUtils {
     /**
      * Convert text to FIGlet using standard font
      * @param text             text
-     * @param horizontalLayout {@link FittingLayoutEnum}
-     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @param horizontalLayout {@link FittingLayout}
+     * @param verticalLayout   {@link FittingLayout}
      * @return FIGlet
      */
-    public static String bananaify(String text, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+    public static String bananaify(String text, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
         return bananaify(text, null, horizontalLayout, verticalLayout);
     }
 
@@ -100,7 +97,7 @@ public final class BananaUtils {
      * @return FIGlet
      */
     public static String bananaify(String text, String font) {
-        return bananaify(text, font, (FittingLayoutEnum) null, null);
+        return bananaify(text, font, (FittingLayout) null, null);
     }
 
     /**
@@ -114,8 +111,8 @@ public final class BananaUtils {
     public static String bananaify(String text, String font, Integer horizontalLayout, Integer verticalLayout) {
         return bananaify(
                 text, font,
-                FittingLayoutEnum.getByCode(horizontalLayout),
-                FittingLayoutEnum.getByCode(verticalLayout)
+                FittingLayout.getByCode(horizontalLayout),
+                FittingLayout.getByCode(verticalLayout)
         );
     }
 
@@ -123,11 +120,11 @@ public final class BananaUtils {
      * Convert text to FIGlet using custom font
      * @param text             text
      * @param font             font
-     * @param horizontalLayout {@link FittingLayoutEnum}
-     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @param horizontalLayout {@link FittingLayout}
+     * @param verticalLayout   {@link FittingLayout}
      * @return FIGlet
      */
-    public static String bananaify(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+    public static String bananaify(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
         String[] texts = bananaifyArray(text, font, horizontalLayout, verticalLayout);
         if (texts == null) {
             return null;
@@ -145,81 +142,78 @@ public final class BananaUtils {
         return sb.toString();
     }
 
-
     /**
      * Convert text to FIGlet using standard font and ANSI escape code
-     * @param text text
-     * @param e    {@link AnsiEnum}
+     * @param text  text
+     * @param style {@link Ansi}
      * @return FIGlet
      */
-    public static String bananansi(String text, AnsiEnum e) {
-        if (e == null) {
+    public static String bananansi(String text, Ansi style) {
+        if (style == null) {
             return bananaify(text);
         }
-        return e.ansi() + bananaify(text) + AnsiEnum.NORMAL.ansi();
+        return Ansi.ansify(bananaify(text), style);
     }
 
     /**
      * Convert text to FIGlet using standard font and ANSI escape code
-     * @param text  text
-     * @param enums {@link AnsiEnum} array
+     * @param text   text
+     * @param styles {@link Ansi} array
      * @return FIGlet
      */
-    public static String bananansi(String text, AnsiEnum... enums) {
-        return bananansi(text, null, null, null, enums);
+    public static String bananansi(String text, Ansi... styles) {
+        return bananansi(text, null, null, null, styles);
     }
 
     /**
      * Convert text to FIGlet using standard font and ANSI escape code
      * @param text             text
-     * @param horizontalLayout {@link FittingLayoutEnum}
-     * @param verticalLayout   {@link FittingLayoutEnum}
-     * @param enums            {@link AnsiEnum} array
+     * @param horizontalLayout {@link FittingLayout}
+     * @param verticalLayout   {@link FittingLayout}
+     * @param styles           {@link Ansi} array
      * @return FIGlet
      */
-    public static String bananansi(String text, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout, AnsiEnum... enums) {
-        return bananansi(text, null, horizontalLayout, verticalLayout, enums);
+    public static String bananansi(String text, FittingLayout horizontalLayout, FittingLayout verticalLayout, Ansi... styles) {
+        return bananansi(text, null, horizontalLayout, verticalLayout, styles);
     }
 
     /**
      * Convert text to FIGlet using custom font and ANSI escape code
-     * @param text  text
-     * @param font  font
-     * @param enums {@link AnsiEnum} array
+     * @param text   text
+     * @param font   font
+     * @param styles {@link Ansi} array
      * @return FIGlet
      */
-    public static String bananansi(String text, String font, AnsiEnum... enums) {
-        return bananansi(text, font, null, null, enums);
+    public static String bananansi(String text, String font, Ansi... styles) {
+        return bananansi(text, font, null, null, styles);
     }
 
     /**
      * Convert text to FIGlet using custom font and ANSI escape code
      * @param text             text
      * @param font             font
-     * @param horizontalLayout {@link FittingLayoutEnum}
-     * @param verticalLayout   {@link FittingLayoutEnum}
-     * @param enums            {@link AnsiEnum} array
+     * @param horizontalLayout {@link FittingLayout}
+     * @param verticalLayout   {@link FittingLayout}
+     * @param styles           {@link Ansi} array
      * @return FIGlet
      */
-    public static String bananansi(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout, AnsiEnum... enums) {
-        return AnsiEnum.multiple(bananaify(text, font, horizontalLayout, verticalLayout), enums);
+    public static String bananansi(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout, Ansi... styles) {
+        return Ansi.ansify(bananaify(text, font, horizontalLayout, verticalLayout), styles);
     }
-
 
     /**
      * Generate text array of FIGlet
      * @param text             text
      * @param font             font
-     * @param horizontalLayout {@link FittingLayoutEnum}
-     * @param verticalLayout   {@link FittingLayoutEnum}
+     * @param horizontalLayout {@link FittingLayout}
+     * @param verticalLayout   {@link FittingLayout}
      * @return Text array of FIGlet
      */
-    public static String[] bananaifyArray(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+    public static String[] bananaifyArray(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
         return generateText(text, font, horizontalLayout, verticalLayout);
     }
 
-
-    private static String[] generateText(String text, String font, FittingLayoutEnum horizontalLayout, FittingLayoutEnum verticalLayout) {
+    private static String[] generateText(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
         FlfHolder holder;
         try {
             holder = getHolder(font);
@@ -229,10 +223,8 @@ public final class BananaUtils {
         if (holder == null) {
             return new String[0];
         }
-        Option option = holder.getOption();
         Map<Integer, String[]> figCharMap = holder.getFigCharMap();
-        setHorizontalLayout(option, horizontalLayout);
-        setVerticalLayout(option, verticalLayout);
+        Option option = setLayout(holder.getOption(), horizontalLayout, verticalLayout);
 
         String[] lines = text.split("\n");
         String[][] texts = new String[lines.length][];
@@ -285,8 +277,8 @@ public final class BananaUtils {
         String path = FLF_DIR_PATH + font + FLF_EXTENSION;
         Option option = new Option();
         StringBuilder sbComment = new StringBuilder();
-        Map<Integer, String[]> figCharMap = new HashMap<>(192);
-        List<String> dataList = new ArrayList<>(3072);
+        Map<Integer, String[]> figCharMap = new HashMap<>(256);
+        List<String> dataList = new ArrayList<>(4000);
 
         InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
         if (inputStream == null) {
@@ -349,32 +341,43 @@ public final class BananaUtils {
         return holder;
     }
 
-    private static void setHorizontalLayout(Option option, FittingLayoutEnum layout) {
-        if (layout == null || layout.code() == DEFAULT) {
+    private static Option setLayout(Option option, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
+        if ((horizontalLayout == null || horizontalLayout.getCode() == DEFAULT)
+                && (verticalLayout == null || verticalLayout.getCode() == DEFAULT)) {
+            return option;
+        }
+        Option newOption = option.copy();
+        setHorizontalLayout(newOption, horizontalLayout);
+        setVerticalLayout(newOption, verticalLayout);
+        return newOption;
+    }
+
+    private static void setHorizontalLayout(Option option, FittingLayout layout) {
+        if (layout == null || layout.getCode() == DEFAULT) {
             return;
         }
-        if (layout.code() == FULL) {
+        if (layout.getCode() == FULL) {
             option.getFittingRule().set(FULL, false, false, false, false, false, false);
-        } else if (layout.code() == FITTING) {
+        } else if (layout.getCode() == FITTING) {
             option.getFittingRule().set(FITTING, false, false, false, false, false, false);
-        } else if (layout.code() == SMUSHING) {
+        } else if (layout.getCode() == SMUSHING) {
             option.getFittingRule().set(SMUSHING, false, false, false, false, false, false);
-        } else if (layout.code() == CONTROLLED_SMUSHING) {
+        } else if (layout.getCode() == CONTROLLED_SMUSHING) {
             option.getFittingRule().set(CONTROLLED_SMUSHING, true, true, true, true, true, true);
         }
     }
 
-    private static void setVerticalLayout(Option option, FittingLayoutEnum layout) {
-        if (layout == null || layout.code() == DEFAULT) {
+    private static void setVerticalLayout(Option option, FittingLayout layout) {
+        if (layout == null || layout.getCode() == DEFAULT) {
             return;
         }
-        if (layout.code() == FULL) {
+        if (layout.getCode() == FULL) {
             option.getFittingRule().set(FULL, false, false, false, false, false);
-        } else if (layout.code() == FITTING) {
+        } else if (layout.getCode() == FITTING) {
             option.getFittingRule().set(FITTING, false, false, false, false, false);
-        } else if (layout.code() == SMUSHING) {
+        } else if (layout.getCode() == SMUSHING) {
             option.getFittingRule().set(SMUSHING, false, false, false, false, false);
-        } else if (layout.code() == CONTROLLED_SMUSHING) {
+        } else if (layout.getCode() == CONTROLLED_SMUSHING) {
             option.getFittingRule().set(CONTROLLED_SMUSHING, true, true, true, true, true);
         }
     }
@@ -512,33 +515,33 @@ public final class BananaUtils {
         FittingRuleEnum[] fittingRules = FittingRuleEnum.values();
         int val = newLayout != null ? newLayout : oldLayout;
         for (FittingRuleEnum fittingRule : fittingRules) {
-            int code = fittingRule.code();
-            String name = fittingRule.key();
-            int value = fittingRule.value();
+            int code = fittingRule.getCode();
+            String name = fittingRule.getKey();
+            int value = fittingRule.getValue();
             if (val >= code) {
                 val -= code;
                 if (!rules.containsKey(name)) {
                     rules.put(name, value);
                 }
-            } else if (!FittingRuleEnum.H_LAYOUT_SMUSHING.key().equals(name)
-                    && !FittingRuleEnum.V_LAYOUT_SMUSHING.key().equals(name)) {
+            } else if (!FittingRuleEnum.H_LAYOUT_SMUSHING.getKey().equals(name)
+                    && !FittingRuleEnum.V_LAYOUT_SMUSHING.getKey().equals(name)) {
                 rules.put(name, 0);
             }
         }
-        FittingRule rule = FittingRule.build(
-                rules.get(FittingRuleEnum.H_LAYOUT_SMUSHING.key()),
-                equals(rules.get(FittingRuleEnum.H_RULE1.key()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE2.key()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE3.key()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE4.key()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE5.key()), 1),
-                equals(rules.get(FittingRuleEnum.H_RULE6.key()), 1),
-                rules.get(FittingRuleEnum.V_LAYOUT_SMUSHING.key()),
-                equals(rules.get(FittingRuleEnum.V_RULE1.key()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE2.key()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE3.key()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE4.key()), 1),
-                equals(rules.get(FittingRuleEnum.V_RULE5.key()), 1)
+        FittingRule rule = new FittingRule(
+                rules.get(FittingRuleEnum.H_LAYOUT_SMUSHING.getKey()),
+                equals(rules.get(FittingRuleEnum.H_RULE1.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE2.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE3.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE4.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE5.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.H_RULE6.getKey()), 1),
+                rules.get(FittingRuleEnum.V_LAYOUT_SMUSHING.getKey()),
+                equals(rules.get(FittingRuleEnum.V_RULE1.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE2.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE3.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE4.getKey()), 1),
+                equals(rules.get(FittingRuleEnum.V_RULE5.getKey()), 1)
         );
         if (rule.gethLayout() == null) {
             if (oldLayout == 0) {
@@ -799,8 +802,8 @@ public final class BananaUtils {
      * any such pair with a vertical bar ("|").
      */
     private static String hRule4Smush(String ch1, String ch2) {
-        int r4Pos1 = RULE_4_EXP.indexOf(ch1);
-        int r4Pos2 = RULE_4_EXP.indexOf(ch2);
+        int r4Pos1 = "[] {} ()".indexOf(ch1);
+        int r4Pos2 = "[] {} ()".indexOf(ch2);
         if ((r4Pos1 != -1 && r4Pos2 != -1) && (Math.abs(r4Pos1 - r4Pos2) <= 1)) {
             return "|";
         }
@@ -815,8 +818,8 @@ public final class BananaUtils {
      * were smushed into "X".
      */
     private static String hRule5Smush(String ch1, String ch2) {
-        int r5Pos1 = RULE_5_EXP.indexOf(ch1);
-        int r5Pos2 = RULE_5_EXP.indexOf(ch2);
+        int r5Pos1 = "/\\ \\/ ><".indexOf(ch1);
+        int r5Pos2 = "/\\ \\/ ><".indexOf(ch2);
         if ((r5Pos1 != -1 && r5Pos2 != -1) && (r5Pos2 - r5Pos1) == 1) {
             if (r5Pos1 == 0) {
                 return "|";
@@ -905,19 +908,19 @@ public final class BananaUtils {
     }
 
     private static String commonRule2Smush(String ch1, String ch2) {
-        if ("_".equals(ch1) && RULE_2_EXP.contains(ch2)) {
+        if ("_".equals(ch1) && "|/\\[]{}()<>".contains(ch2)) {
             return ch2;
-        } else if ("_".equals(ch2) && RULE_2_EXP.contains(ch1)) {
+        } else if ("_".equals(ch2) && "|/\\[]{}()<>".contains(ch1)) {
             return ch1;
         }
         return EMPTY;
     }
 
     private static String commonRule3Smush(String ch1, String ch2) {
-        int r3Pos1 = RULE_3_EXP.indexOf(ch1);
-        int r3Pos2 = RULE_3_EXP.indexOf(ch2);
+        int r3Pos1 = "| /\\ [] {} () <>".indexOf(ch1);
+        int r3Pos2 = "| /\\ [] {} () <>".indexOf(ch2);
         if ((r3Pos1 != -1 && r3Pos2 != -1) && (r3Pos1 != r3Pos2 && Math.abs(r3Pos1 - r3Pos2) != 1)) {
-            return substr(RULE_3_EXP, Math.max(r3Pos1, r3Pos2), 1);
+            return substr("| /\\ [] {} () <>", Math.max(r3Pos1, r3Pos2), 1);
         }
         return EMPTY;
     }

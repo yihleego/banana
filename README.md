@@ -17,14 +17,14 @@ Being free software, FIGlet is commonly included as part of many Unix-like opera
 <dependency>
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```xml
-implementation 'io.leego:banana:1.2.1'
+implementation 'io.leego:banana:1.3.0'
 ```
 
 ## Usage
@@ -145,7 +145,7 @@ Output:
 // Customize font color or style of the console
 BananaUtils.bananansi(
         "Hello, Github!",
-        AnsiEnum.RED, AnsiEnum.B_YELLOW, AnsiEnum.BOLD
+        Ansi.RED, Ansi.BG_YELLOW, Ansi.BOLD
 );
 ```
 

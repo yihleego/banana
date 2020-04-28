@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author YihLeego
+ * @author Yihleego
  */
 public class FlfHolder {
     private String name;

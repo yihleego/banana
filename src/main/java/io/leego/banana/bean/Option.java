@@ -1,10 +1,9 @@
 package io.leego.banana.bean;
 
 /**
- * @author YihLeego
+ * @author Yihleego
  */
 public class Option {
-
     private Integer baseline;
     private Integer codeTagCount;
     private FittingRule fittingRule;
@@ -21,7 +20,9 @@ public class Option {
     public Option() {
     }
 
-    public Option(Integer baseline, Integer codeTagCount, FittingRule fittingRule, Integer fullLayout, String hardBlank, Integer height, Integer maxLength, Integer numCommentLines, Integer oldLayout, Integer printDirection) {
+    public Option(Integer baseline, Integer codeTagCount, FittingRule fittingRule,
+                  Integer fullLayout, String hardBlank, Integer height,
+                  Integer maxLength, Integer numCommentLines, Integer oldLayout, Integer printDirection) {
         this.baseline = baseline;
         this.codeTagCount = codeTagCount;
         this.fittingRule = fittingRule;
@@ -32,6 +33,12 @@ public class Option {
         this.numCommentLines = numCommentLines;
         this.oldLayout = oldLayout;
         this.printDirection = printDirection;
+    }
+
+    public Option copy() {
+        return new Option(baseline, codeTagCount, fittingRule != null ? fittingRule.copy() : null,
+                fullLayout, hardBlank, height,
+                maxLength, numCommentLines, oldLayout, printDirection);
     }
 
     public Integer getBaseline() {
