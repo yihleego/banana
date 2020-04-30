@@ -8,10 +8,12 @@ import io.leego.banana.enums.FittingLayout;
 import io.leego.banana.enums.FittingRuleEnum;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,17 +39,27 @@ public final class BananaUtils {
     private static final String INVALID = "invalid";
     private static final String VALID = "valid";
     private static final String END = "end";
-    private static final String ROOT_DIR_PATH = "banana/";
-    private static final String FLF_DIR_PATH = ROOT_DIR_PATH + "flf/";
-    private static final String FLF_NAME_PATH = ROOT_DIR_PATH + "FLF_NAME";
+    private static final String ROOT_DIR_PATH = "banana";
+    private static final String FLF_DIR_PATH = ROOT_DIR_PATH + File.separator + "flf";
+    private static final String FLF_NAME_PATH = ROOT_DIR_PATH + File.separator + "FLF_NAME";
     private static final String STANDARD_FLF = "Standard";
     private static final String FLF_EXTENSION = ".flf";
     private static final ConcurrentMap<String, FlfHolder> flfMap = new ConcurrentHashMap<>();
+    private static final List<Integer> codes = new ArrayList<>();
+
+    static {
+        // ascii codes
+        for (int i = 32; i <= 126; i++) {
+            codes.add(i);
+        }
+        // extra codes
+        Collections.addAll(codes, 196, 214, 220, 228, 246, 252, 223);
+    }
 
     private BananaUtils() {}
 
     /**
-     * Get all fonts
+     * Obtains all fonts.
      * @return fonts
      */
     public static List<String> fonts() {
@@ -71,7 +83,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using standard font
+     * Converts text to FIGlet using default font.
      * @param text text
      * @return FIGlet
      */
@@ -80,7 +92,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using standard font
+     * Converts text to FIGlet using default font.
      * @param text             text
      * @param horizontalLayout {@link FittingLayout}
      * @param verticalLayout   {@link FittingLayout}
@@ -91,7 +103,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using custom font
+     * Converts text to FIGlet using specified font.
      * @param text text
      * @param font font
      * @return FIGlet
@@ -101,7 +113,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using custom font
+     * Converts text to FIGlet using specified font.
      * @param text             text
      * @param font             font
      * @param horizontalLayout option: 0(default), 1(full), 2(fitting), 3(smushing), 4(controlled_smushing)
@@ -112,12 +124,11 @@ public final class BananaUtils {
         return bananaify(
                 text, font,
                 FittingLayout.getByCode(horizontalLayout),
-                FittingLayout.getByCode(verticalLayout)
-        );
+                FittingLayout.getByCode(verticalLayout));
     }
 
     /**
-     * Convert text to FIGlet using custom font
+     * Converts text to FIGlet using specified font.
      * @param text             text
      * @param font             font
      * @param horizontalLayout {@link FittingLayout}
@@ -125,15 +136,15 @@ public final class BananaUtils {
      * @return FIGlet
      */
     public static String bananaify(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout) {
-        String[] texts = bananaifyArray(text, font, horizontalLayout, verticalLayout);
-        if (texts == null) {
+        String[] lines = bananaifyArray(text, font, horizontalLayout, verticalLayout);
+        if (lines == null) {
             return null;
         }
-        if (texts.length == 0) {
+        if (lines.length == 0) {
             return EMPTY;
         }
         StringBuilder sb = new StringBuilder();
-        for (String s : texts) {
+        for (String s : lines) {
             sb.append(s).append("\n");
         }
         if (sb.length() > 1) {
@@ -143,7 +154,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using standard font and ANSI escape code
+     * Converts text to FIGlet using default font and ANSI escape code.
      * @param text  text
      * @param style {@link Ansi}
      * @return FIGlet
@@ -152,11 +163,11 @@ public final class BananaUtils {
         if (style == null) {
             return bananaify(text);
         }
-        return Ansi.ansify(bananaify(text), style);
+        return bananansi(text, new Ansi[]{style});
     }
 
     /**
-     * Convert text to FIGlet using standard font and ANSI escape code
+     * Converts text to FIGlet using default font and ANSI escape code.
      * @param text   text
      * @param styles {@link Ansi} array
      * @return FIGlet
@@ -166,7 +177,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using standard font and ANSI escape code
+     * Converts text to FIGlet using default font and ANSI escape code.
      * @param text             text
      * @param horizontalLayout {@link FittingLayout}
      * @param verticalLayout   {@link FittingLayout}
@@ -178,7 +189,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using custom font and ANSI escape code
+     * Converts text to FIGlet using specified font and ANSI escape code.
      * @param text   text
      * @param font   font
      * @param styles {@link Ansi} array
@@ -189,7 +200,7 @@ public final class BananaUtils {
     }
 
     /**
-     * Convert text to FIGlet using custom font and ANSI escape code
+     * Converts text to FIGlet using specified font and ANSI escape code.
      * @param text             text
      * @param font             font
      * @param horizontalLayout {@link FittingLayout}
@@ -198,11 +209,25 @@ public final class BananaUtils {
      * @return FIGlet
      */
     public static String bananansi(String text, String font, FittingLayout horizontalLayout, FittingLayout verticalLayout, Ansi... styles) {
-        return Ansi.ansify(bananaify(text, font, horizontalLayout, verticalLayout), styles);
+        String[] lines = bananaifyArray(text, font, horizontalLayout, verticalLayout);
+        if (lines == null) {
+            return null;
+        }
+        if (lines.length == 0) {
+            return EMPTY;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String s : lines) {
+            sb.append(Ansi.ansify(s, styles)).append("\n");
+        }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
     }
 
     /**
-     * Generate text array of FIGlet
+     * Converts text to FIGlet。
      * @param text             text
      * @param font             font
      * @param horizontalLayout {@link FittingLayout}
@@ -266,7 +291,7 @@ public final class BananaUtils {
 
     private static FlfHolder getHolder(String font) throws IOException {
         FlfHolder holder;
-        if (font == null) {
+        if (isEmpty(font)) {
             font = STANDARD_FLF;
         }
         holder = flfMap.get(font);
@@ -274,7 +299,7 @@ public final class BananaUtils {
             return holder;
         }
 
-        String path = FLF_DIR_PATH + font + FLF_EXTENSION;
+        String path = FLF_DIR_PATH + File.separator + font + FLF_EXTENSION;
         Option option = new Option();
         StringBuilder sbComment = new StringBuilder();
         Map<Integer, String[]> figCharMap = new HashMap<>(256);
@@ -316,22 +341,14 @@ public final class BananaUtils {
         inputStreamReader.close();
         inputStream.close();
 
-        // ascii code: 32 = space (' '), 126 = tilde ('~')
-        List<Integer> charCodeList = new ArrayList<>();
-        for (int i = 32; i <= 126; i++) {
-            charCodeList.add(i);
-        }
-        // extra codes
-        // Collections.addAll(charCodeList,196, 214, 220, 228, 246, 252, 223);
-
         String mark = dataList.get(0).substring(dataList.get(0).length() - 1);
         if (isEmpty(mark)) {
             mark = "@";
         }
         int height = option.getHeight();
-        for (int i = 0; i < charCodeList.size(); i++) {
+        for (int i = 0; i < codes.size(); i++) {
             String[] fig = new String[height];
-            figCharMap.put(charCodeList.get(i), fig);
+            figCharMap.put(codes.get(i), fig);
             for (int j = 0; j < height; j++) {
                 fig[j] = dataList.get(i * height + j).replace(mark, EMPTY);
             }
@@ -435,7 +452,7 @@ public final class BananaUtils {
     }
 
     /**
-     * main horizontal smush routines (excluding rules)
+     * Main horizontal smush routines (excluding rules)
      */
     private static int getHorizontalSmushLength(String txt1, String txt2, Option opts) {
         if (opts.getFittingRule().gethLayout() == FULL) {
@@ -649,13 +666,13 @@ public final class BananaUtils {
     }
 
     /**
-     * txt1 - A line of text
-     * txt2 - A line of text
-     * opts - FIGlet options array
-     * About: Takes in two lines of text and returns one of the following:
+     * Takes in two lines of text and returns one of the following:
      * "valid" - These lines can be smushed together given the current smushing rules
      * "end" - The lines can be smushed, but we're at a stopping point
      * "invalid" - The two lines cannot be smushed together
+     * @param txt1 A line of text
+     * @param txt2 A line of text
+     * @param opts FIGlet options array
      */
     private static String canVerticalSmush(String txt1, String txt2, Option opts) {
         if (opts.getFittingRule().getvLayout() == FULL) {
