@@ -1,6 +1,6 @@
 # Banana
 
-A FIGlet Utils for Java.
+A FIGlet utility for Java.
 
 ## What is FIGlet
  
@@ -142,7 +142,7 @@ Output:
 ### ANSI escape code
 
 ```java
-// Customize font color or style of the console
+// Customize colours and styles
 BananaUtils.bananansi(
         "Hello, Github!",
         Ansi.RED, Ansi.BG_YELLOW, Ansi.BOLD
