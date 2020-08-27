@@ -1,10 +1,10 @@
-package io.leego.banana.enums;
+package io.leego.banana;
 
 /**
  * @author Yihleego
  */
 public enum Ansi {
-    /** font color */
+    /** Font-Colors. */
     BLACK("30"),
     RED("31"),
     GREEN("32"),
@@ -13,7 +13,7 @@ public enum Ansi {
     PURPLE("35"),
     CYAN("36"),
     WHITE("37"),
-    /** background color */
+    /** Background-Colors. */
     BG_BLACK("40"),
     BG_RED("41"),
     BG_GREEN("42"),
@@ -22,7 +22,7 @@ public enum Ansi {
     BG_PURPLE("45"),
     BG_CYAN("46"),
     BG_WHITE("47"),
-    /** others */
+    /** Others. */
     NORMAL("0"),
     BOLD("1"),
     FAINT("2"),

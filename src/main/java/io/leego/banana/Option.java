@@ -1,4 +1,4 @@
-package io.leego.banana.bean;
+package io.leego.banana;
 
 /**
  * @author Yihleego
@@ -6,12 +6,10 @@ package io.leego.banana.bean;
 public class Option {
     private Integer baseline;
     private Integer codeTagCount;
-    private FittingRule fittingRule;
-
+    private Rule rule;
     private Integer fullLayout;
     private String hardBlank;
     private Integer height;
-
     private Integer maxLength;
     private Integer numCommentLines;
     private Integer oldLayout;
@@ -20,12 +18,12 @@ public class Option {
     public Option() {
     }
 
-    public Option(Integer baseline, Integer codeTagCount, FittingRule fittingRule,
+    public Option(Integer baseline, Integer codeTagCount, Rule rule,
                   Integer fullLayout, String hardBlank, Integer height,
                   Integer maxLength, Integer numCommentLines, Integer oldLayout, Integer printDirection) {
         this.baseline = baseline;
         this.codeTagCount = codeTagCount;
-        this.fittingRule = fittingRule;
+        this.rule = rule;
         this.fullLayout = fullLayout;
         this.hardBlank = hardBlank;
         this.height = height;
@@ -36,7 +34,7 @@ public class Option {
     }
 
     public Option copy() {
-        return new Option(baseline, codeTagCount, fittingRule != null ? fittingRule.copy() : null,
+        return new Option(baseline, codeTagCount, rule != null ? rule.copy() : null,
                 fullLayout, hardBlank, height,
                 maxLength, numCommentLines, oldLayout, printDirection);
     }
@@ -57,12 +55,12 @@ public class Option {
         this.codeTagCount = codeTagCount;
     }
 
-    public FittingRule getFittingRule() {
-        return fittingRule;
+    public Rule getRule() {
+        return rule;
     }
 
-    public void setFittingRule(FittingRule fittingRule) {
-        this.fittingRule = fittingRule;
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
 
     public Integer getFullLayout() {
