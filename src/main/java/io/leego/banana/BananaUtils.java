@@ -250,7 +250,7 @@ public final class BananaUtils {
                     figletMap.remove(code);
                     break;
                 }
-                figlet[j] = data.get(row).replace(mark, EMPTY);
+                figlet[j] = data.get(row).replaceAll("[" + mark + "]+$", EMPTY);
             }
         }
         data.clear();

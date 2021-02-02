@@ -17,14 +17,14 @@ Being free software, FIGlet is commonly included as part of many Unix-like opera
 <dependency>
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```xml
-implementation 'io.leego:banana:2.0.0'
+implementation 'io.leego:banana:2.0.1'
 ```
 
 ## Usage
