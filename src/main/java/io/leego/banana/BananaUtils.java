@@ -1,15 +1,11 @@
 package io.leego.banana;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Banana is a FIGlet utility for Java.
@@ -198,7 +194,27 @@ public final class BananaUtils {
             if (inputStream == null) {
                 return null;
             }
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, font.getCharset());
+            InputStreamReader inputStreamReader;
+
+            // detects zipped font
+            PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 4);
+            byte[] buf = new byte[4];
+            pushbackInputStream.read(buf, 0, 4);
+            pushbackInputStream.unread(buf);
+
+            byte[] pkzipHeader = new byte[] {0x50, 0x4b, 0x03, 0x04};
+            if (Arrays.equals(pkzipHeader, buf)) {
+                ZipInputStream zipInputStream = new ZipInputStream(pushbackInputStream);
+                // expects a single anonymous entry
+                ZipEntry nextEntry = zipInputStream.getNextEntry();
+                if (nextEntry == null) {
+                    return null;
+                }
+                inputStreamReader = new InputStreamReader(zipInputStream);
+            } else {
+                inputStreamReader = new InputStreamReader(pushbackInputStream, font.getCharset());
+            }
+
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
