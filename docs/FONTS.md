@@ -4457,3 +4457,85 @@ BananaUtils.bananaify("Hello, World!", Font.WOW);
 ][-][ ]E ][_ ][_ [[]] ,  \\/\\/ [[]] ][2 ][_ ][_) !!1 
 ```
 
+Circle
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.CIRCLE);
+```
+
+```
+Ⓗⓔⓛⓛⓞ, Ⓦⓞⓡⓛⓓ!
+```
+
+Emboss
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.EMBOSS);
+```
+
+```
+┃ ┃┏━┛┃  ┃  ┏━┃   ┃┃┃┏━┃┏━┃┃  ┏━ ┃
+┏━┃┏━┛┃  ┃  ┃ ┃   ┃┃┃┃ ┃┏┏┛┃  ┃ ┃┛
+┛ ┛━━┛━━┛━━┛━━┛,  ━━┛━━┛┛ ┛━━┛━━ ┛
+```
+
+Emboss 2
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.EMBOSS2);
+```
+
+```
+║ ║╔═╝║  ║  ╔═║   ║║║╔═║╔═║║  ╔═ ║
+╔═║╔═╝║  ║  ║ ║   ║║║║ ║╔╔╝║  ║ ║╝
+╝ ╝══╝══╝══╝══╝,  ══╝══╝╝ ╝══╝══ ╝
+```
+
+Future
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.FUTURE);
+```
+
+```
+╻ ╻┏━╸╻  ╻  ┏━┓     ╻ ╻┏━┓┏━┓╻  ╺┳┓╻
+┣━┫┣╸ ┃  ┃  ┃ ┃     ┃╻┃┃ ┃┣┳┛┃   ┃┃╹
+╹ ╹┗━╸┗━╸┗━╸┗━┛ ┛   ┗┻┛┗━┛╹┗╸┗━╸╺┻┛╹
+```
+
+Pagga
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.PAGGA);
+```
+
+```
+░█░█░█▀▀░█░░░█░░░█▀█░░░░░░░█░█░█▀█░█▀▄░█░░░█▀▄░█
+░█▀█░█▀▀░█░░░█░░░█░█░░░░░░░█▄█░█░█░█▀▄░█░░░█░█░▀
+░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▄▀░░░░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀░░▀
+```
+
+Rusto
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.RUSTO);
+```
+
+```
+┬ ┬┬─┐┬  ┬  ┌─┐   ┐ ┬┌─┐┬─┐┬  ┬─┐┐
+│─┤├─ │  │  │ │   ││││ ││┬┘│  │ ││
+┆ ┴┴─┘┆─┘┆─┘┘─┘┘  └┴┆┘─┘┆└┘┆─┘┆─┘o
+```
+
+Rusto Fat
+
+```java
+BananaUtils.bananaify("Hello, World!", Font.RUSTO_FAT);
+```
+
+```
+┳ ┳┳━┓┳  ┳  ┏━┓   ┓ ┳┏━┓┳━┓┳  ┳━┓┓
+┃━┫┣━ ┃  ┃  ┃ ┃   ┃┃┃┃ ┃┃┳┛┃  ┃ ┃┃
+┇ ┻┻━┛┇━┛┇━┛┛━┛┛  ┗┻┇┛━┛┇┗┛┇━┛┇━┛o
+```
+

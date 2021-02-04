@@ -287,6 +287,15 @@ public enum Font {
     WET_LETTER("Wet Letter", "Wet_Letter.flf"),
     WHIMSY("Whimsy", "Whimsy.flf"),
     WOW("Wow", "Wow.flf"),
+
+
+    CIRCLE("Circle", "circle.tlf"),
+    EMBOSS("Emboss", "emboss.tlf"),
+    EMBOSS2("Emboss 2", "emboss2.tlf"),
+    FUTURE("Future", "future.tlf"),
+    PAGGA("Pagga", "pagga.tlf"),
+    RUSTO("Rusto", "rusto.tlf"),
+    RUSTO_FAT("Rusto Fat", "rustofat.tlf"),
     ;
     private final String name;
     private final String filename;

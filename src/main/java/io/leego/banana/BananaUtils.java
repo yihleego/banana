@@ -233,10 +233,8 @@ public final class BananaUtils {
         List<Integer> codes = Constants.CODES;
         int height = option.getHeight();
         Map<Integer, String[]> figletMap = new HashMap<>(codes.size());
-        String mark = data.get(num).substring(data.get(num).length() - 1);
-        if (isEmpty(mark)) {
-            mark = "@";
-        }
+
+        // read font character
         for (int i = 0; i < codes.size(); i++) {
             Integer code = codes.get(i);
             if (i * height + num >= data.size()) {
@@ -250,7 +248,23 @@ public final class BananaUtils {
                     figletMap.remove(code);
                     break;
                 }
-                figlet[j] = data.get(row).replaceAll("[" + mark + "]+$", EMPTY);
+                String charRow = data.get(row);
+
+                // inspired by readfontchar method in figlet.c
+                // https://github.com/cmatsuoka/figlet/blob/202a0a8110650a943f1125f536b3bb455cf72ee1/figlet.c#L1146-L1168
+                // endmarks my differ for each characters in tlf files
+                int charIndex = charRow.length() - 1; // starts at the end
+
+                while (charIndex >= 0 && Character.isWhitespace(charRow.charAt(charIndex))) { // remove trailing space
+                    charIndex--;
+                }
+
+                char endChar = charRow.charAt(charIndex); // first endmark
+                while (charIndex >= 0 && charRow.charAt(charIndex) == endChar) { // remove all endmarks
+                    charIndex--;
+                }
+
+                figlet[j] = charRow.substring(0, charIndex + 1);
             }
         }
         data.clear();
