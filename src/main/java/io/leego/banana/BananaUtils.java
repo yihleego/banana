@@ -188,41 +188,22 @@ public final class BananaUtils {
     private static Meta buildMeta(Font font) {
         // Reads file content.
         List<String> data = new ArrayList<>();
-        try {
-            String path = Constants.FONT_DIR_PATH + font.getFilename();
-            InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+        String path = Constants.FONT_DIR_PATH + font.getFilename();
+
+        try (InputStream resourceStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+             InputStream inputStream = unwrapZippedFontIfNecessary(resourceStream)) {
             if (inputStream == null) {
                 return null;
             }
-            InputStreamReader inputStreamReader;
-
-            // detects zipped font
-            PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 4);
-            byte[] buf = new byte[4];
-            pushbackInputStream.read(buf, 0, 4);
-            pushbackInputStream.unread(buf);
-
-            byte[] pkzipHeader = new byte[] {0x50, 0x4b, 0x03, 0x04};
-            if (Arrays.equals(pkzipHeader, buf)) {
-                ZipInputStream zipInputStream = new ZipInputStream(pushbackInputStream);
-                // expects a single anonymous entry
-                ZipEntry nextEntry = zipInputStream.getNextEntry();
-                if (nextEntry == null) {
-                    return null;
-                }
-                inputStreamReader = new InputStreamReader(zipInputStream);
-            } else {
-                inputStreamReader = new InputStreamReader(pushbackInputStream, font.getCharset());
-            }
-
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, font.getCharset());
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 data.add(line);
             }
             bufferedReader.close();
             inputStreamReader.close();
-            inputStream.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load font \"" + font.getName() + "\"", e);
         }
@@ -285,6 +266,31 @@ public final class BananaUtils {
         }
         data.clear();
         return new Meta(font, option, figletMap, comment.toString());
+    }
+
+    private static InputStream unwrapZippedFontIfNecessary(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return null;
+        }
+
+        // detects zipped font
+        PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 4);
+        byte[] buf = new byte[4];
+        pushbackInputStream.read(buf, 0, 4);
+        pushbackInputStream.unread(buf);
+
+        byte[] pkzipHeader = new byte[] {0x50, 0x4b, 0x03, 0x04};
+        if (Arrays.equals(pkzipHeader, buf)) {
+            ZipInputStream zipInputStream = new ZipInputStream(pushbackInputStream);
+            // expects a single anonymous entry
+            ZipEntry nextEntry = zipInputStream.getNextEntry();
+            if (nextEntry == null) {
+                return null;
+            }
+            return zipInputStream;
+        } else {
+            return pushbackInputStream;
+        }
     }
 
     private static String[] generateFigletLine(String text, Map<Integer, String[]> figletMap, Option option) {
