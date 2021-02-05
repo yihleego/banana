@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author Yihleego
  */
-public enum Font {
+public enum Font implements FontSpec {
     ONE_ROW("1Row", "1Row.flf"),
     THREE_D("3-D", "3-D.flf"),
     THREE_D_ASCII("3D-ASCII", "3D-ASCII.flf"),
@@ -304,6 +304,10 @@ public enum Font {
     SMALL_ASCII9("Small ASCII 9", "smascii9.tlf"),
     SMALL_ASCII12("Small ASCII 12", "smascii12.tlf"),
     ;
+
+    public static final String ROOT_DIR_PATH = "banana";
+    public static final String FONT_DIR_PATH = ROOT_DIR_PATH + "/fonts/";
+
     private final String name;
     private final String filename;
 
@@ -312,19 +316,21 @@ public enum Font {
         this.filename = filename;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getFilename() {
-        return filename;
+        return FONT_DIR_PATH + filename;
     }
 
     public Charset getCharset() {
         return StandardCharsets.UTF_8;
     }
 
-    private static final Map<String, Font> map = new HashMap<>(64);
+    private static final Map<String, FontSpec> map = new HashMap<>(64);
 
     static {
         for (Font e : values()) {
@@ -332,7 +338,7 @@ public enum Font {
         }
     }
 
-    public static Font get(String name) {
+    public static FontSpec get(String name) {
         return map.get(name);
     }
 

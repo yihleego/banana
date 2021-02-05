@@ -1,6 +1,7 @@
 package io.leego.banana;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,14 +9,12 @@ import java.util.List;
  * @author Yihleego
  */
 public final class Constants {
-    public static final String ROOT_DIR_PATH = "banana";
-    public static final String FONT_DIR_PATH = ROOT_DIR_PATH + "/fonts/";
     public static final int INVALID = 0;
     public static final int VALID = 1;
     public static final int END = 2;
     public static final Font DEFAULT_FONT = Font.STANDARD;
     public static final List<Integer> CODES;
-    public static final List<Font> FONTS;
+    public static final List<FontSpec> FONTS;
 
     static {
         CODES = Collections.unmodifiableList(codes());
@@ -36,8 +35,8 @@ public final class Constants {
         return codes;
     }
 
-    private static List<Font> fonts() {
-        List<Font> fonts = new ArrayList<>(Font.values().length);
+    private static List<FontSpec> fonts() {
+        List<FontSpec> fonts = new ArrayList<>(Font.values().length);
         Collections.addAll(fonts, Font.values());
         return fonts;
     }

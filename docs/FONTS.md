@@ -1803,7 +1803,7 @@ BananaUtils.bananaify("Hello, World!", Font.FOUR_TOPS);
 Fraktur
 
 ```java
-BananaUtils.bananaify("Hello, World!",Font.FRAKTUR);
+BananaUtils.bananaify("Hello, World!", Font.FRAKTUR);
 ```
 
 ```
@@ -3178,7 +3178,7 @@ BananaUtils.bananaify("Hello, World!", Font.PEPPER);
 Poison
 
 ```java
-BananaUtils.bananaify("Hello, World!",Font.POISON);
+BananaUtils.bananaify("Hello, World!", Font.POISON);
 ```
 
 ```
@@ -3653,7 +3653,7 @@ BananaUtils.bananaify("Hello, World!", Font.SMALL_KEYBOARD);
 Small Poison
 
 ```java
-BananaUtils.bananaify("Hello, World!",Font.SMALL_POISON);
+BananaUtils.bananaify("Hello, World!", Font.SMALL_POISON);
 ```
 
 ```

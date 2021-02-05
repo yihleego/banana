@@ -15,7 +15,7 @@ public class BananaUtilsTest {
     public void produce_fonts_md() throws IOException {
         try (PrintWriter w = new PrintWriter(Files.newBufferedWriter(Paths.get("docs/FONTS.md"),
                                                                      StandardCharsets.UTF_8))) {
-            for (Font font : BananaUtils.fonts()) {
+            for (Font font : Font.values()) {
                 String fig_letters = BananaUtils.bananaify("Hello, World!", font);
 
                 w.printf(

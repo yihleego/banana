@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream;
 public final class BananaUtils {
     private static final String EMPTY = "";
     private static final String BLANK = " ";
-    private static final ConcurrentMap<Font, Meta> cache = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<FontSpec, Meta> cache = new ConcurrentHashMap<>();
 
     private BananaUtils() {
     }
@@ -26,7 +26,7 @@ public final class BananaUtils {
      * Returns all fonts.
      * @return all fonts.
      */
-    public static List<Font> fonts() {
+    public static List<FontSpec> fonts() {
         return Constants.FONTS;
     }
 
@@ -188,7 +188,7 @@ public final class BananaUtils {
     private static Meta buildMeta(Font font) {
         // Reads file content.
         List<String> data = new ArrayList<>();
-        String path = Constants.FONT_DIR_PATH + font.getFilename();
+        String path = font.getFilename();
 
         try (InputStream resourceStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
              InputStream inputStream = unwrapZippedFontIfNecessary(resourceStream)) {
