@@ -1,15 +1,11 @@
 package io.leego.banana;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Banana is a FIGlet utility for Java.
@@ -192,21 +188,22 @@ public final class BananaUtils {
     private static Meta buildMeta(Font font) {
         // Reads file content.
         List<String> data = new ArrayList<>();
-        try {
-            String path = Constants.FONT_DIR_PATH + font.getFilename();
-            InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+        String path = Constants.FONT_DIR_PATH + font.getFilename();
+
+        try (InputStream resourceStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+             InputStream inputStream = unwrapZippedFontIfNecessary(resourceStream)) {
             if (inputStream == null) {
                 return null;
             }
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, font.getCharset());
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 data.add(line);
             }
             bufferedReader.close();
             inputStreamReader.close();
-            inputStream.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load font \"" + font.getName() + "\"", e);
         }
@@ -233,10 +230,8 @@ public final class BananaUtils {
         List<Integer> codes = Constants.CODES;
         int height = option.getHeight();
         Map<Integer, String[]> figletMap = new HashMap<>(codes.size());
-        String mark = data.get(num).substring(data.get(num).length() - 1);
-        if (isEmpty(mark)) {
-            mark = "@";
-        }
+
+        // read font character
         for (int i = 0; i < codes.size(); i++) {
             Integer code = codes.get(i);
             if (i * height + num >= data.size()) {
@@ -250,11 +245,52 @@ public final class BananaUtils {
                     figletMap.remove(code);
                     break;
                 }
-                figlet[j] = data.get(row).replaceAll("[" + mark + "]+$", EMPTY);
+                String charRow = data.get(row);
+
+                // inspired by readfontchar method in figlet.c
+                // https://github.com/cmatsuoka/figlet/blob/202a0a8110650a943f1125f536b3bb455cf72ee1/figlet.c#L1146-L1168
+                // endmarks my differ for each characters in tlf files
+                int charIndex = charRow.length() - 1; // starts at the end
+
+                while (charIndex >= 0 && Character.isWhitespace(charRow.charAt(charIndex))) { // remove trailing space
+                    charIndex--;
+                }
+
+                char endChar = charRow.charAt(charIndex); // first endmark
+                while (charIndex >= 0 && charRow.charAt(charIndex) == endChar) { // remove all endmarks
+                    charIndex--;
+                }
+
+                figlet[j] = charRow.substring(0, charIndex + 1);
             }
         }
         data.clear();
         return new Meta(font, option, figletMap, comment.toString());
+    }
+
+    private static InputStream unwrapZippedFontIfNecessary(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return null;
+        }
+
+        // detects zipped font
+        PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 4);
+        byte[] buf = new byte[4];
+        pushbackInputStream.read(buf, 0, 4);
+        pushbackInputStream.unread(buf);
+
+        byte[] pkzipHeader = new byte[] {0x50, 0x4b, 0x03, 0x04};
+        if (Arrays.equals(pkzipHeader, buf)) {
+            ZipInputStream zipInputStream = new ZipInputStream(pushbackInputStream);
+            // expects a single anonymous entry
+            ZipEntry nextEntry = zipInputStream.getNextEntry();
+            if (nextEntry == null) {
+                return null;
+            }
+            return zipInputStream;
+        } else {
+            return pushbackInputStream;
+        }
     }
 
     private static String[] generateFigletLine(String text, Map<Integer, String[]> figletMap, Option option) {

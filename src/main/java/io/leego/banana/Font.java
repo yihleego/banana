@@ -287,6 +287,22 @@ public enum Font {
     WET_LETTER("Wet Letter", "Wet_Letter.flf"),
     WHIMSY("Whimsy", "Whimsy.flf"),
     WOW("Wow", "Wow.flf"),
+
+
+    CIRCLE("Circle", "circle.tlf"),
+    EMBOSS("Emboss", "emboss.tlf"),
+    EMBOSS2("Emboss 2", "emboss2.tlf"),
+    FUTURE("Future", "future.tlf"),
+    PAGGA("Pagga", "pagga.tlf"),
+    RUSTO("Rusto", "rusto.tlf"),
+    RUSTO_FAT("Rusto Fat", "rustofat.tlf"),
+
+    ASCII9("ASCII 9", "ascii9.tlf"),
+    ASCII12("ASCII 12", "ascii12.tlf"),
+    BIG_ASCII9("Big ASCII 9", "bigascii9.tlf"),
+    BIG_ASCII12("Big ASCII 12", "bigascii12.tlf"),
+    SMALL_ASCII9("Small ASCII 9", "smascii9.tlf"),
+    SMALL_ASCII12("Small ASCII 12", "smascii12.tlf"),
     ;
     private final String name;
     private final String filename;
