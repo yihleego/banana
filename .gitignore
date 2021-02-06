@@ -25,4 +25,3 @@ nbdist/
 ### custom ###
 logs
 *.log
-test

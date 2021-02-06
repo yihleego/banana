@@ -1,11 +1,16 @@
 package io.leego.banana;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Banana is a FIGlet utility for Java.
@@ -15,9 +20,24 @@ import java.util.zip.ZipInputStream;
  * @author Yihleego
  */
 public final class BananaUtils {
+    private static final int INVALID = 0;
+    private static final int VALID = 1;
+    private static final int END = 2;
     private static final String EMPTY = "";
-    private static final String BLANK = " ";
+    private static final String WHITESPACE = " ";
+    private static final List<Integer> CODES;
     private static final ConcurrentMap<Font, Meta> cache = new ConcurrentHashMap<>();
+
+    static {
+        List<Integer> codes = new ArrayList<>();
+        // Adds ASCII codes.
+        for (int i = 32; i < 127; i++) {
+            codes.add(i);
+        }
+        // Adds extra codes.
+        Collections.addAll(codes, 196, 214, 220, 223, 228, 246, 252);
+        CODES = Collections.unmodifiableList(codes);
+    }
 
     private BananaUtils() {
     }
@@ -27,7 +47,7 @@ public final class BananaUtils {
      * @return all fonts.
      */
     public static List<Font> fonts() {
-        return Constants.FONTS;
+        return Font.values();
     }
 
     /**
@@ -171,7 +191,7 @@ public final class BananaUtils {
 
     private static Meta getMeta(Font font) {
         if (font == null) {
-            font = Constants.DEFAULT_FONT;
+            font = Font.STANDARD;
         }
         Meta cachedMeta = cache.get(font);
         if (cachedMeta != null) {
@@ -188,28 +208,19 @@ public final class BananaUtils {
     private static Meta buildMeta(Font font) {
         // Reads file content.
         List<String> data = new ArrayList<>();
-        String path = Constants.FONT_DIR_PATH + font.getFilename();
-
-        try (InputStream resourceStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
-             InputStream inputStream = unwrapZippedFontIfNecessary(resourceStream)) {
-            if (inputStream == null) {
-                return null;
-            }
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, font.getCharset());
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
+        try (InputStream inputStream = font.getInputStream();
+             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, font.getCharset());
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 data.add(line);
             }
-            bufferedReader.close();
-            inputStreamReader.close();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load font \"" + font.getName() + "\"", e);
+            throw new RuntimeException("Failed to load font '" + font.getName() + "'.", e);
         }
         // Builds option.
         Option option = new Option();
-        String[] header = data.get(0).split(BLANK);
+        String[] header = data.get(0).split(WHITESPACE);
         option.setHardBlank(header[0].substring(5, 6));
         option.setHeight(Integer.parseInt(header[1]));
         option.setBaseline(Integer.parseInt(header[2]));
@@ -227,11 +238,11 @@ public final class BananaUtils {
             comment.append(data.get(num)).append("\n");
         }
         // Builds FIGlet map.
-        List<Integer> codes = Constants.CODES;
+        List<Integer> codes = CODES;
         int height = option.getHeight();
         Map<Integer, String[]> figletMap = new HashMap<>(codes.size());
 
-        // read font character
+        // Reads font character
         for (int i = 0; i < codes.size(); i++) {
             Integer code = codes.get(i);
             if (i * height + num >= data.size()) {
@@ -268,31 +279,6 @@ public final class BananaUtils {
         return new Meta(font, option, figletMap, comment.toString());
     }
 
-    private static InputStream unwrapZippedFontIfNecessary(InputStream inputStream) throws IOException {
-        if (inputStream == null) {
-            return null;
-        }
-
-        // detects zipped font
-        PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 4);
-        byte[] buf = new byte[4];
-        pushbackInputStream.read(buf, 0, 4);
-        pushbackInputStream.unread(buf);
-
-        byte[] pkzipHeader = new byte[] {0x50, 0x4b, 0x03, 0x04};
-        if (Arrays.equals(pkzipHeader, buf)) {
-            ZipInputStream zipInputStream = new ZipInputStream(pushbackInputStream);
-            // expects a single anonymous entry
-            ZipEntry nextEntry = zipInputStream.getNextEntry();
-            if (nextEntry == null) {
-                return null;
-            }
-            return zipInputStream;
-        } else {
-            return pushbackInputStream;
-        }
-    }
-
     private static String[] generateFigletLine(String text, Map<Integer, String[]> figletMap, Option option) {
         int height = option.getHeight();
         String[] output = new String[height];
@@ -315,7 +301,7 @@ public final class BananaUtils {
             output = smushHorizontal(output, figlet, overlap, option);
         }
         for (int i = 0; i < output.length; i++) {
-            output[i] = output[i].replace(option.getHardBlank(), BLANK);
+            output[i] = output[i].replace(option.getHardBlank(), WHITESPACE);
         }
         return output;
     }
@@ -380,9 +366,9 @@ public final class BananaUtils {
             String seg1 = substr(text1, Math.max(0, len1 - overlap), overlap);
             String seg2 = substr(text2, 0, Math.min(overlap, len2));
             for (int j = 0; j < overlap; j++) {
-                String ch1 = j < len1 ? substr(seg1, j, 1) : BLANK;
-                String ch2 = j < len2 ? substr(seg2, j, 1) : BLANK;
-                if (!BLANK.equals(ch1) && !BLANK.equals(ch2)) {
+                String ch1 = j < len1 ? substr(seg1, j, 1) : WHITESPACE;
+                String ch2 = j < len2 ? substr(seg2, j, 1) : WHITESPACE;
+                if (!WHITESPACE.equals(ch1) && !WHITESPACE.equals(ch2)) {
                     if (rule.getHorizontalLayout() == Layout.FITTED) {
                         piece.append(smushUniversal(ch1, ch2, hardBlank));
                     } else if (rule.getHorizontalLayout() == Layout.SMUSH_U) {
@@ -439,7 +425,7 @@ public final class BananaUtils {
             for (int i = 0; i < Math.min(curDist, len2); i++) {
                 String ch1 = substr(seg1, i, 1);
                 String ch2 = substr(seg2, i, 1);
-                if (!BLANK.equals(ch1) && !BLANK.equals(ch2)) {
+                if (!WHITESPACE.equals(ch1) && !WHITESPACE.equals(ch2)) {
                     if (rule.getHorizontalLayout() == Layout.FITTED) {
                         curDist = curDist - 1;
                         skip = true;
@@ -578,7 +564,7 @@ public final class BananaUtils {
     private static void padLines(String[] lines, int numSpaces) {
         StringBuilder padding = new StringBuilder();
         for (int i = 0; i < numSpaces; i++) {
-            padding.append(BLANK);
+            padding.append(WHITESPACE);
         }
         String padded = padding.toString();
         for (int i = 0; i < lines.length; i++) {
@@ -595,21 +581,21 @@ public final class BananaUtils {
         while (curDist <= maxDist) {
             subLines1 = slice(figlet1, Math.max(0, len1 - curDist), len1);
             subLines2 = slice(figlet2, 0, Math.min(maxDist, curDist));
-            int result = Constants.VALID;
+            int result = VALID;
             for (int i = 0; i < subLines2.length; i++) {
                 int ret = canSmushVertical(subLines1[i], subLines2[i], option);
-                if (Constants.END == ret) {
+                if (END == ret) {
                     result = ret;
-                } else if (Constants.INVALID == ret) {
+                } else if (INVALID == ret) {
                     result = ret;
                     break;
                 }
             }
-            if (Constants.INVALID == result) {
+            if (INVALID == result) {
                 curDist--;
                 break;
             }
-            if (Constants.END == result) {
+            if (END == result) {
                 break;
             }
             curDist++;
@@ -629,7 +615,7 @@ public final class BananaUtils {
     private static int canSmushVertical(String line1, String line2, Option option) {
         Rule rule = option.getRule();
         if (rule.getVerticalLayout() == Layout.FULL) {
-            return Constants.INVALID;
+            return INVALID;
         }
         int len = Math.min(line1.length(), line2.length());
         String ch1;
@@ -637,16 +623,16 @@ public final class BananaUtils {
         boolean endSmush = false;
         boolean validSmush;
         if (len == 0) {
-            return Constants.INVALID;
+            return INVALID;
         }
         for (int i = 0; i < len; i++) {
             ch1 = substr(line1, i, 1);
             ch2 = substr(line2, i, 1);
-            if (!BLANK.equals(ch1) && !BLANK.equals(ch2)) {
+            if (!WHITESPACE.equals(ch1) && !WHITESPACE.equals(ch2)) {
                 if (rule.getVerticalLayout() == Layout.FITTED) {
-                    return Constants.INVALID;
+                    return INVALID;
                 } else if (rule.getVerticalLayout() == Layout.SMUSH_U) {
-                    return Constants.END;
+                    return END;
                 } else {
                     if (isNotEmpty(smushVerticalRule5(ch1, ch2))) {
                         continue;
@@ -663,15 +649,15 @@ public final class BananaUtils {
                         validSmush = isNotEmpty(smushVerticalRule4(ch1, ch2));
                     endSmush = true;
                     if (!validSmush) {
-                        return Constants.INVALID;
+                        return INVALID;
                     }
                 }
             }
         }
         if (endSmush) {
-            return Constants.END;
+            return END;
         } else {
-            return Constants.VALID;
+            return VALID;
         }
     }
 
@@ -706,7 +692,7 @@ public final class BananaUtils {
         for (int i = 0; i < len; i++) {
             ch1 = substr(line1, i, 1);
             ch2 = substr(line2, i, 1);
-            if (!BLANK.equals(ch1) && !BLANK.equals(ch2)) {
+            if (!WHITESPACE.equals(ch1) && !WHITESPACE.equals(ch2)) {
                 if (rule.getVerticalLayout() == Layout.FITTED) {
                     result.append(smushUniversal(ch1, ch2, null));
                 } else if (rule.getVerticalLayout() == Layout.SMUSH_U) {
@@ -916,9 +902,9 @@ public final class BananaUtils {
      * FIGfonts, wherin the latter FIGcharacter may appear to be "in front".
      */
     private static String smushUniversal(String s1, String s2, String hardBlank) {
-        if (equals(BLANK, s2) || equals(EMPTY, s2)) {
+        if (equals(WHITESPACE, s2) || equals(EMPTY, s2)) {
             return s1;
-        } else if (equals(s2, hardBlank) && !equals(BLANK, s1)) {
+        } else if (equals(s2, hardBlank) && !equals(WHITESPACE, s1)) {
             return s1;
         } else {
             return s2;
@@ -989,7 +975,7 @@ public final class BananaUtils {
     /**
      * Checks that the given {@code String} is neither {@code null} nor of length 0.
      * @param s the string.
-     * @return <code>true</code> if the String is not empty and not null.
+     * @return {@code true} if the String is not empty and not null.
      */
     private static boolean isNotEmpty(String s) {
         return !isEmpty(s);

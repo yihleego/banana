@@ -3,11 +3,13 @@
 A FIGlet utility for Java.
 
 ## What is FIGlet
- 
-[FIGlet](https://en.wikipedia.org/wiki/FIGlet) is a computer program that generates text banners, in a variety of typefaces, composed of letters made up of conglomerations of smaller 
-ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)). The name derives from "Frank, Ian and Glenn's letters".
 
-Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well. The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet). There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
+[FIGlet](https://en.wikipedia.org/wiki/FIGlet) is a computer program that generates text banners, in a variety of typefaces, composed of letters made up of conglomerations of smaller ASCII characters (see [ASCII art](https://en.wikipedia.org/wiki/ASCII_art)).
+The name derives from "Frank, Ian and Glenn's letters".
+
+Being free software, FIGlet is commonly included as part of many Unix-like operating systems (Linux, BSD, etc.) distributions, but it has been ported to other platforms as well.
+The official FIGlet FTP site includes precompiled ports for the Acorn, Amiga, Apple II, Atari ST, BeOS, Macintosh, MS-DOS, NeXTSTEP, OS/2, and Windows platforms, as well as a reimplementation in Perl (Text::FIGlet).
+There are third-party reimplementations of FIGlet in Java (including one embedded in the JavE ASCII art editor), JavaScript, PHP and Python. FIGlet was featured as a Debian Package of the Day in 2007.
 
 ## Dependency
 
@@ -29,7 +31,7 @@ implementation 'io.leego:banana:2.0.1'
 
 ## Usage
 
-### Example 
+### Example
 
 ```java
 BananaUtils.bananaify("Hello, Banana!");
@@ -205,4 +207,5 @@ BananaUtils.bananansi("Hello, World!", Ansi.RED, Ansi.BG_YELLOW);
 > * Bugs & Issues: [Click Here](https://github.com/yihleego/banana/issues)
 
 ## License
+
 Banana is under the Apache 2.0 license. See the [LICENSE](LICENSE.txt) file for details.
