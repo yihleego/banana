@@ -5,12 +5,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import static io.leego.banana.BananaUtils.classpathFont;
+import static io.leego.banana.BananaUtils.filesystemFont;
 
 public class BananaUtilsTest {
 
@@ -44,7 +45,8 @@ public class BananaUtilsTest {
     public void can_pass_user_provided_fonts_on_the_classpath() {
         String renderedText = BananaUtils.bananaify(
                 "custom",
-                classpathFont("1 Row",
+                classpathFont(BananaUtilsTest.class.getClassLoader(),
+                              "1 Row",
                               "banana/fonts/" + "1Row.flf"));
 
         Assert.assertEquals(
@@ -67,53 +69,5 @@ public class BananaUtilsTest {
                 "                      ",
                 renderedText
         );
-    }
-
-    private FontSpec filesystemFont(final String name, final String path) {
-        return new FontSpec() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getFilename() {
-                return path;
-            }
-
-            @Override
-            public Charset getCharset() {
-                return StandardCharsets.UTF_8;
-            }
-
-            @Override
-            public InputStream getResourceStream() throws IOException {
-                return Files.newInputStream(Paths.get(path));
-            }
-        };
-    }
-
-    static FontSpec classpathFont(final String name, final String fontPath) {
-        return new FontSpec() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getFilename() {
-                return fontPath;
-            }
-
-            @Override
-            public Charset getCharset() {
-                return StandardCharsets.UTF_8;
-            }
-
-            @Override
-            public InputStream getResourceStream() {
-                return this.getClass().getClassLoader().getResourceAsStream(fontPath);
-            }
-        };
     }
 }

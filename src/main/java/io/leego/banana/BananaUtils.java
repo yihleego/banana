@@ -1,7 +1,19 @@
 package io.leego.banana;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.ZipEntry;
@@ -28,6 +40,54 @@ public final class BananaUtils {
      */
     public static List<Font> fonts() {
         return Constants.FONTS;
+    }
+
+    public static FontSpec filesystemFont(final String name, final String path) {
+        return new FontSpec() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getFilename() {
+                return path;
+            }
+
+            @Override
+            public Charset getCharset() {
+                return StandardCharsets.UTF_8;
+            }
+
+            @Override
+            public InputStream getResourceStream() throws IOException {
+                return Files.newInputStream(Paths.get(path));
+            }
+        };
+    }
+
+    public static FontSpec classpathFont(final ClassLoader classLoader, final String name, final String fontPath) {
+        return new FontSpec() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getFilename() {
+                return fontPath;
+            }
+
+            @Override
+            public Charset getCharset() {
+                return StandardCharsets.UTF_8;
+            }
+
+            @Override
+            public InputStream getResourceStream() {
+                return classLoader.getResourceAsStream(fontPath);
+            }
+        };
     }
 
     /**
