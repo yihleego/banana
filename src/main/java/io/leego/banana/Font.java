@@ -1,5 +1,6 @@
 package io.leego.banana;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -323,12 +324,17 @@ public enum Font implements FontSpec {
 
     @Override
     public String getFilename() {
-        return FONT_DIR_PATH + filename;
+        return filename;
     }
 
     @Override
     public Charset getCharset() {
         return StandardCharsets.UTF_8;
+    }
+
+    @Override
+    public InputStream getResourceStream() {
+        return Font.class.getClassLoader().getResourceAsStream(FONT_DIR_PATH + filename);
     }
 
     private static final Map<String, FontSpec> map = new HashMap<>(64);

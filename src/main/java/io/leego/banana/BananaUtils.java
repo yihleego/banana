@@ -190,7 +190,7 @@ public final class BananaUtils {
         List<String> data = new ArrayList<>();
         String path = font.getFilename();
 
-        try (InputStream resourceStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
+        try (InputStream resourceStream = font.getResourceStream();
              InputStream inputStream = unwrapZippedFontIfNecessary(resourceStream)) {
             if (inputStream == null) {
                 return null;
