@@ -14,7 +14,7 @@ public final class Constants {
     public static final int END = 2;
     public static final Font DEFAULT_FONT = Font.STANDARD;
     public static final List<Integer> CODES;
-    public static final List<FontSpec> FONTS;
+    public static final List<Font> FONTS;
 
     static {
         CODES = Collections.unmodifiableList(codes());
@@ -35,8 +35,8 @@ public final class Constants {
         return codes;
     }
 
-    private static List<FontSpec> fonts() {
-        List<FontSpec> fonts = new ArrayList<>(Font.values().length);
+    private static List<Font> fonts() {
+        List<Font> fonts = new ArrayList<>(Font.values().length);
         Collections.addAll(fonts, Font.values());
         return fonts;
     }

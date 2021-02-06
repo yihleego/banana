@@ -1,10 +1,12 @@
 package io.leego.banana;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,7 +17,7 @@ public class BananaUtilsTest {
     public void produce_fonts_md() throws IOException {
         try (PrintWriter w = new PrintWriter(Files.newBufferedWriter(Paths.get("docs/FONTS.md"),
                                                                      StandardCharsets.UTF_8))) {
-            for (Font font : Font.values()) {
+            for (Font font : BananaUtils.fonts()) {
                 String fig_letters = BananaUtils.bananaify("Hello, World!", font);
 
                 w.printf(
@@ -35,6 +37,37 @@ public class BananaUtilsTest {
                 );
             }
         }
+    }
 
+    @Test
+    public void can_pass_user_provided_fonts_on_the_classpath() {
+        String renderedText = BananaUtils.bananaify(
+                "custom",
+                classpathFont("1 Row",
+                              "banana/fonts/" + "1Row.flf"));
+
+        Assert.assertEquals(
+                "( |_| _\\~ ~|~ () |\\/| \n" +
+                "                      ",
+                renderedText
+        );
+    }
+    static FontSpec classpathFont(final String name, final String fontPath) {
+        return new FontSpec() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getFilename() {
+                return fontPath;
+            }
+
+            @Override
+            public Charset getCharset() {
+                return StandardCharsets.UTF_8;
+            }
+        };
     }
 }

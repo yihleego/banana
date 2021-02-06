@@ -326,6 +326,7 @@ public enum Font implements FontSpec {
         return FONT_DIR_PATH + filename;
     }
 
+    @Override
     public Charset getCharset() {
         return StandardCharsets.UTF_8;
     }
