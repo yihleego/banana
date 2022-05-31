@@ -208,4 +208,4 @@ BananaUtils.bananansi("Hello, World!", Ansi.RED, Ansi.BG_YELLOW);
 
 ## License
 
-Banana is under the Apache 2.0 license. See the [LICENSE](LICENSE.txt) file for details.
+Banana is under the MIT license. See the [LICENSE](LICENSE) file for details.
