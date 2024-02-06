@@ -312,7 +312,7 @@ public class Font {
 
     protected static final List<Font> VALUES;
     protected static final Map<String, Font> MAP;
-    protected static final String ROOT_DIR_PATH = "banana";
+    protected static final String ROOT_DIR_PATH = "/banana";
     protected static final String FONT_DIR_PATH = ROOT_DIR_PATH + "/fonts/";
 
     static {
@@ -651,7 +651,7 @@ public class Font {
     }
 
     public InputStream getInputStream() throws IOException {
-        InputStream inputStream = Font.class.getClassLoader().getResourceAsStream(FONT_DIR_PATH + filename);
+        InputStream inputStream = Font.class.getResourceAsStream(FONT_DIR_PATH + filename);
         if (inputStream == null) {
             throw new RuntimeException("Failed to load font '" + this.name + "', the specified font does not exist.");
         }
