@@ -8,7 +8,7 @@
 
     <groupId>io.leego</groupId>
     <artifactId>banana</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>A FIGlet utility for Java that generates text banners, in a variety of typefaces, composed of letters made up of conglomerations of smaller ASCII characters.</description>
